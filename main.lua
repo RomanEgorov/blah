@@ -58,34 +58,7 @@ local function updatePlayer(dt)
 end
 
 local function updateEnemy(enemy, dt)
-  -- local dx, dy = 0, 0
-
-  -- if enemy.y >= 500 then
-  --   enemy.yDirection = 'up'
-  -- elseif enemy.y <= 100 then
-  --   enemy.yDirection = 'down'
-  -- end
-
-  -- if enemy.xDirection == 'right' then
-  --   dx = enemy.speed * dt
-  -- elseif enemy.xDirection == 'left' then
-  --   dx = -enemy.speed * dt
-  -- end
-  -- if enemy.yDirection == 'up' then
-  --   dy = -enemy.speed * dt
-  -- elseif enemy.yDirection == 'down' then
-  --   dy = enemy.speed * dt
-  -- end
-
-  -- local dx, dy = enemy:tryMove(dt)
   enemy:update(dt)
-
-  -- local items, len = world:queryRect(50, 50, 20, 20)
-  -- if len > 0 and items[1].id ~= nil then
-  --   print(items[1].id)
-  -- else
-  --   print("nothing")
-  -- end
 end
 
 local function drawBlocks()
@@ -103,13 +76,13 @@ function love.load()
   addBlock(800-32, 32,      32, 600-32*2)
   addBlock(0,      600-32, 800, 32)
 
-  for i=1,30 do
-    addBlock( math.random(100, 600),
-              math.random(100, 400),
-              math.random(10, 100),
-              math.random(10, 100)
-    )
-  end
+  -- for i=1,30 do
+  --   addBlock( math.random(100, 600),
+  --             math.random(100, 400),
+  --             math.random(10, 100),
+  --             math.random(10, 100)
+  --   )
+  -- end
 
   addEnemy(650, 100, 20, 20, 60)
 
