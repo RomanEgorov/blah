@@ -102,7 +102,7 @@ function MeleeMob:watchThatBastard(dt)
 end	
 
 function MeleeMob:followThatBastard(dt)
-	self.speed = 90
+	self.speed = 70
 
 	self.viewBox.x = (self.x + self.w / 2) - 40
 	self.viewBox.y = (self.y + self.h / 2) - 40
