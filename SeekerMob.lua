@@ -21,6 +21,8 @@ function SeekerMob:_init(world, x, y)
 	self.w = 20
 	self.h = 20
 	self.speed = 80
+
+	self.carryingResource = false
 end
 
 function SeekerMob:seekResource(dt) 
