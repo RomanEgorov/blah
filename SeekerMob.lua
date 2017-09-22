@@ -1,5 +1,6 @@
 local MobBrain = require "MobBrain"
 
+
 local SeekerMob = {}
 SeekerMob.__index = SeekerMob
 
@@ -56,20 +57,7 @@ function SeekerMob:seekResource(dt)
   		end
   	end
 
-  	local xRand = math.random(1, 90)
-  	local yRand = math.random(1, 90)
-  	local dx, dy = 0, 0
-
-  	if xRand > 0 and xRand < 31 then
-  		dx = self.speed * dt
-  	elseif xRand > 30 and xRand < 61 then
-  		dx = -self.speed * dt
-  	end
-  	if yRand > 0 and xRand < 31 then
-  		dy = -self.speed * dt
-  	elseif yRand > 30 and xRand < 61 then
-  		dy = self.speed * dt
-  	end
+  	local dx, dy = self:_randomNavigation(dt)
 
   	if dx ~= 0 or dy ~= 0 then
   	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
@@ -86,6 +74,25 @@ end
 
 function SeekerMob:fleeToBase(dt)
 -- координаты базы?
+end
+
+function SeekerMob:_randomNavigation(dt)
+  	local xRand = math.random(1, 90)
+  	local yRand = math.random(1, 90)
+  	local dx, dy = 0, 0
+
+  	if xRand > 0 and xRand < 31 then
+  		dx = self.speed * dt
+  	elseif xRand > 30 and xRand < 61 then
+  		dx = -self.speed * dt
+  	end
+  	if yRand > 0 and xRand < 31 then
+  		dy = -self.speed * dt
+  	elseif yRand > 30 and xRand < 61 then
+  		dy = self.speed * dt
+  	end
+
+  	return dx, dy
 end
 
 return SeekerMob
