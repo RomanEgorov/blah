@@ -1,6 +1,7 @@
 local bump = require "bump"
 local MeleeMob = require "meleeMob"
 local EnemyBase = require "EnemyBase"
+local SeekerMob = require "SeekerMob"
 
 local world = bump.newWorld()
 
@@ -42,6 +43,11 @@ end
 
 local function addEnemy(x, y, w, h, speed)
     local mob = MeleeMob.new(x, y, w, h, speed, world)
+    enemies[#enemies+1] = mob
+end
+
+local function addSeekerEnemy(x, y)
+    local mob = SeekerMob(world, x, y)
     enemies[#enemies+1] = mob
 end
 
@@ -123,6 +129,7 @@ function love.load()
       -- end
 
     addEnemy(650, 100, 20, 20, 60)
+    addSeekerEnemy(100, 100)
 
     for _, enemy in ipairs(enemies) do
         world:add(enemy, enemy.x, enemy.y, enemy.w, enemy.h)
