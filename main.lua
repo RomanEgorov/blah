@@ -5,7 +5,7 @@ local PathGraph = require "PathGraph"
 
 local world = bump.newWorld()
 
-local player = { id = "player", x = 50, y = 50, w = 40, h = 40, speed = 70 }
+local player = { id = "player", x = 50, y = 50, w = 40, h = 40, speed = 100 }
 local blocks = {}
 local enemies = {}
 local resources = {}
@@ -13,10 +13,12 @@ local resourcesNum = 0
 local lastResourceSpawn = 0
 local resourceSpawnInterval = 0.01
 local blockCount = 10
--- local playerPath = PathGraph:new(world.rects)
 local playerPath = {}
 
-local enemyBase = EnemyBase(world, 715, 515, 50, 50)
+local pause = false
+local speedModifier = 1
+
+-- local enemyBase = EnemyBase(world, 715, 515, 50, 50)
 
 local goToPoint = false
 
@@ -33,26 +35,26 @@ local function drawPlayer()
     love.graphics.print("Game", player.x, player.y - 20)
 
     --    отрисовка точек
-    for p = 1, #playerPath.nodes do
-        love.graphics.points(playerPath.nodes[p][1], playerPath.nodes[p][2])
-        love.graphics.setColor(250,195,125,250)
-        love.graphics.print(p, playerPath.nodes[p][1], playerPath.nodes[p][2])
-    end
+--     for p = 1, #playerPath.nodes do
+--         love.graphics.points(playerPath.nodes[p][1], playerPath.nodes[p][2])
+--         love.graphics.setColor(250,195,125,250)
+--         love.graphics.print(p, playerPath.nodes[p][1], playerPath.nodes[p][2])
+--     end
 
---    отрисовка линий
-    love.graphics.setColor(0,125,125,250)
-    for l = 1, #playerPath.edges do
-        love.graphics.line(playerPath.nodes[playerPath.edges[l][1]][1], playerPath.nodes[playerPath.edges[l][1]][2], playerPath.nodes[playerPath.edges[l][2]][1], playerPath.nodes[playerPath.edges[l][2]][2])
-    end
+-- --    отрисовка линий
+--     love.graphics.setColor(0,125,125,250)
+--     for l = 1, #playerPath.edges do
+--         love.graphics.line(playerPath.nodes[playerPath.edges[l][1]][1], playerPath.nodes[playerPath.edges[l][1]][2], playerPath.nodes[playerPath.edges[l][2]][1], playerPath.nodes[playerPath.edges[l][2]][2])
+--     end
 
-    --    отрисовка маршрута
-    love.graphics.setColor(250,125,125,250)
-    if #playerPath.path>0 then
-        love.graphics.line(player.x + player.w / 2, player.y + player.h / 2, playerPath.path[1][1], playerPath.path[1][2])
-        for i = 2, #playerPath.path, 1 do
-            love.graphics.line(playerPath.path[i-1][1], playerPath.path[i-1][2], playerPath.path[i][1], playerPath.path[i][2])
-        end
-    end
+--     --    отрисовка маршрута
+--     love.graphics.setColor(250,125,125,250)
+--     if #playerPath.path>0 then
+--         love.graphics.line(player.x + player.w / 2, player.y + player.h / 2, playerPath.path[1][1], playerPath.path[1][2])
+--         for i = 2, #playerPath.path, 1 do
+--             love.graphics.line(playerPath.path[i-1][1], playerPath.path[i-1][2], playerPath.path[i][1], playerPath.path[i][2])
+--         end
+--     end
 
     --    отрисовка финальной точки
     love.graphics.points(playerPath.dest[1], playerPath.dest[2])
@@ -64,6 +66,13 @@ local function drawEnemies()
     for _, enemy in ipairs(enemies) do
         drawBox(enemy, 0, 0, 255)
         drawBox(enemy.viewBox, 55, 55, 55)
+
+        -- if enemy.patrolPoints ~= nil then
+        --     love.graphics.setPointSize(4)
+        --     for _, point in ipairs(enemy.patrolPoints) do
+        --         love.graphics.points(point.x, point.y)
+        --     end
+        -- end
     end
 end
 
@@ -178,7 +187,7 @@ end
 -- Callbacks
 function love.load()
     world:add(player, player.x, player.y, player.w, player.h)
-    world:add(enemyBase, enemyBase.x, enemyBase.y, enemyBase.w, enemyBase.h)
+    -- world:add(enemyBase, enemyBase.x, enemyBase.y, enemyBase.w, enemyBase.h)
 
     addBlock(0,       0,     800, 32)
     addBlock(0,      32,      32, 600-32*2)
@@ -213,8 +222,14 @@ function love.load()
 end
 
 function love.update(dt)
+    if pause then
+        dt = dt * 0
+    else
+        dt = dt * speedModifier
+    end
+
     updatePlayer(dt)
-    enemyBase:update(dt)
+    -- enemyBase:update(dt)
 
     for _, enemy in ipairs(enemies) do
     -- enemy:update(dt)
@@ -235,11 +250,32 @@ function love.draw()
   drawEnemies()
   drawResources()
 
-  drawBox(enemyBase, 255, 255, 0)
+  -- drawBox(enemyBase, 255, 255, 0)
 end
 
 function love.keypressed(k)
-  if k == "escape" then love.event.quit() end
+    if k == "escape" then love.event.quit() end
+
+    if k == "q" then
+        speedModifier = 1
+    end
+    if k == "w" then
+        speedModifier = 2
+    end
+    if k == "e" then
+        speedModifier = 3
+    end
+    if k == "r" then
+        speedModifier = 10
+    end
+
+    if k == "p" then 
+        if pause then
+            pause = false
+        else
+            pause = true
+        end
+    end
 end
 
 function love.mousepressed(x, y)
