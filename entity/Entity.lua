@@ -5,7 +5,9 @@ local PathGraph = require "PathGraph"
 
 local Entity = class("Entity")
 
-function Entity:initialize(world, x, y)
+function Entity:initialize(id, world, x, y)
+	self.id = id
+
 	self.world = world
 
 	self.x = x

@@ -94,7 +94,7 @@ function PathGraph:_buildNodes()
     for p = #self.nodes, 1, -1  do
         local inBox = false
         for b = 1, #self.staticObjects do
-            if (self.nodes[p][1] > self.staticObjects[b].x - self.source.w /2 and self.nodes[p][1] < self.staticObjects[b].x + self.staticObjects[b].w + self.source.w/2
+            if (self.nodes[p][1] > self.staticObjects[b].x - self.source.w / 2 and self.nodes[p][1] < self.staticObjects[b].x + self.staticObjects[b].w + self.source.w / 2
                     and self.nodes[p][2] > self.staticObjects[b].y - self.source.h/2 and self.nodes[p][2] < self.staticObjects[b].y + self.staticObjects[b].h + self.source.h/2) then
                 inBox = true
             end
@@ -158,7 +158,7 @@ function PathGraph:_dijkstra()
     while #nodes_open > 0 do
         table.sort(nodes_open, function(a, b) return weigths[a] < weigths[b]  end)
         local p = nodes_open[1]
-        print('visit', p, weigths[p] )
+        -- print('visit', p, weigths[p] )
         table.remove(nodes_open, 1)
         nodes_close[p] = true
         for l = 1, #self.edges do
@@ -166,7 +166,7 @@ function PathGraph:_dijkstra()
                 local new_weigth = weigths[p] + self.edges[l][3]
                 if new_weigth < weigths[self.edges[l][2]] then
                     table.insert(nodes_open, self.edges[l][2])
-                    print('add', self.edges[l][2])
+                    -- print('add', self.edges[l][2])
 
                     weigths[self.edges[l][2]] = new_weigth
                     paths[self.edges[l][2]] = table_copy(paths[p])
@@ -177,7 +177,7 @@ function PathGraph:_dijkstra()
                 local new_weigth = weigths[p] + self.edges[l][3]
                 if new_weigth < weigths[self.edges[l][1]] then
                     table.insert(nodes_open, self.edges[l][1])
-                    print('add', self.edges[l][1])
+                    -- print('add', self.edges[l][1])
 
                     weigths[self.edges[l][1]] = new_weigth
                     paths[self.edges[l][1]] = table_copy(paths[p])

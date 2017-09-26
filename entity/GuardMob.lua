@@ -5,11 +5,11 @@ local Entity = require "entity.Entity"
 local GuardMob = class("GuardMob", Entity)
 
 function GuardMob:initialize(world, x, y)
-    Entity.initialize(self, world, x, y)
+    Entity.initialize(self, "GuardMob", world, x, y)
 
 	self.w = 20
 	self.h = 20
-	self.speed = 100
+	self.speed = 180
 
 	self.xDirection = 'none'
 	self.yDirection = 'down'
@@ -21,11 +21,12 @@ function GuardMob:initialize(world, x, y)
 		h = 100
 	}
 
-	self.brain:pushState(GuardMob.walk)
+	-- self.brain:pushState(GuardMob.walk)
+    self.brain:pushState(GuardMob.patrol)
 
-    self.patrolPoints = {}
-
-	return self
+    self.patrolPoints = {{x = 650, y = 100}, {x = 650, y = 500}, {x = 100, y = 500}}
+    self.nextPatrolPoint = self.patrolPoints[1]
+    self.nextPatrolPointIndex = 1
 end
 
 function GuardMob:update(dt)
@@ -33,7 +34,58 @@ function GuardMob:update(dt)
 end
 
 function GuardMob:patrol(dt)
+    -- print("patrol()")
+    if self:findPlayer() then
+        self.brain:pushState(GuardMob.followThatBastard)
+    end
 
+    if self.x == self.nextPatrolPoint.x and self.y == self.nextPatrolPoint.y then
+        if self.nextPatrolPointIndex == #self.patrolPoints then
+            self.nextPatrolPointIndex = 1
+        else
+            self.nextPatrolPointIndex = self.nextPatrolPointIndex + 1
+        end
+
+        self.nextPatrolPoint = self.patrolPoints[self.nextPatrolPointIndex]
+
+        self.pathGraph:findPath(self, {self.nextPatrolPoint.x, self.nextPatrolPoint.y})
+    end
+
+    local dx, dy = 0, 0
+
+    if #self.pathGraph.path > 0 then
+        -- print("#path > 0")
+
+        local pointX, pointY = self.pathGraph.path[1][1], self.pathGraph.path[1][2]
+        -- print(pointX, pointY)
+
+        if #self.pathGraph.path then
+            -- dx = (pointX - self.x - self.w / 2)
+            -- dy = (pointY - self.y - self.h / 2)
+            dx = (pointX - self.x)
+            dy = (pointY - self.y)
+            local dxy = (dx^2 + dy^2)^0.5
+            if dxy < 10 then
+                table.remove(self.pathGraph.path, 1)
+                if not #self.pathGraph.path then
+                    -- goToPoint = false
+                    return
+                end
+            else
+                dx = dx / dxy
+                dy = dy / dxy
+                if self.speed * dt < dxy then
+                    dxy = self.speed * dt
+                end
+                dx = dx * dxy
+                dy = dy * dxy
+            end
+        end
+    else
+        -- print("path == 0")
+    end
+
+    self:move(dx, dy)
 end
 
 function GuardMob:walk(dt)
@@ -158,6 +210,12 @@ function GuardMob:findPlayer()
     end
 
     return false
+end
+
+function GuardMob:move(dx, dy)
+    if dx ~= 0 or dy ~= 0 then
+        self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
+    end
 end
 
 return GuardMob
