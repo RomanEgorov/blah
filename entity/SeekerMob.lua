@@ -1,24 +1,12 @@
-local MobBrain = require "MobBrain"
+local class = require "lib.middleclass"
 
+local Entity = require "entity.Entity"
 
-local SeekerMob = {}
-SeekerMob.__index = SeekerMob
+local SeekerMob = class("SeekerMob", Entity)
 
-setmetatable(SeekerMob, {
-	__call = function(cls, ...)
-		local self = setmetatable({}, cls)
-		self:_init(...)
+function SeekerMob:initialize(world, x, y)
+	Entity.initialize(self, "SeekerMob", world, x, y)
 
-		return self
-	end
-})
-
-function SeekerMob:_init(world, x, y)
-	self.brain = MobBrain()
-
-	self.world = world
-	self.x = x
-	self.y = y
 	self.w = 20
 	self.h = 20
 	self.speed = 80

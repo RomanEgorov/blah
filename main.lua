@@ -1,7 +1,7 @@
 local bump = require "bump"
 local GuardMob = require "entity.GuardMob"
 local EnemyBase = require "EnemyBase"
-local SeekerMob = require "SeekerMob"
+local SeekerMob = require "entity.SeekerMob"
 local PathGraph = require "PathGraph"
 
 local world = bump.newWorld()
