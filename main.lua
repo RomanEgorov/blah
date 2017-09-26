@@ -13,7 +13,8 @@ local resourcesNum = 0
 local lastResourceSpawn = 0
 local resourceSpawnInterval = 0.01
 local blockCount = 10
-local playerPath = PathGraph:new(blocks)
+-- local playerPath = PathGraph:new(world.rects)
+local playerPath = {}
 
 local enemyBase = EnemyBase(world, 715, 515, 50, 50)
 
@@ -70,6 +71,7 @@ end
 local function addBlock(x,y,w,h)
     local block = {x=x,y=y,w=w,h=h}
     blocks[#blocks+1] = block
+    world.staticObjects[#world.staticObjects + 1] = block
     world:add(block, x,y,w,h)
 end
 
@@ -206,6 +208,8 @@ function love.load()
         world:add(enemy, enemy.x, enemy.y, enemy.w, enemy.h)
         -- world:add(enemy.viewBox, enemy.viewBox.x, enemy.viewBox.y, enemy.viewBox.w, enemy.viewBox.h)
     end
+
+    playerPath = PathGraph:new(world.staticObjects)
 end
 
 function love.update(dt)

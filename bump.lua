@@ -737,7 +737,8 @@ bump.newWorld = function(cellSize)
     rects          = {},
     rows           = {},
     nonEmptyCells  = {},
-    responses = {}
+    responses = {}, 
+    staticObjects = {}
   }, World_mt)
 
   world:addResponse('touch', touch)
