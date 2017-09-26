@@ -1,19 +1,20 @@
+local class = require "lib.middleclass"
+
+local Entity = require "entity.Entity"
 local MobBrain = require "MobBrain"
 
-local MeleeMob = {}
-MeleeMob.__index = MeleeMob
+local GuardMob = class("GuardMob", Entity)
 
-function MeleeMob.new(x, y, w, h, speed, world)
-	local self = setmetatable({}, MeleeMob)
-	self.x = x
-	self.y = y
-	self.w = w
-	self.h = h
-	self.speed = speed
+function GuardMob:initialize(world, x, y)
+    Entity.initialize(self, world, x, y)
+
+	self.w = 20
+	self.h = 20
+	self.speed = 100
+
 	self.xDirection = 'none'
 	self.yDirection = 'down'
 	self.brain = MobBrain()
-	self.world = world
 
 	self.viewBox = {
 		x = (self.x + self.w / 2) - 50,
@@ -22,16 +23,16 @@ function MeleeMob.new(x, y, w, h, speed, world)
 		h = 100
 	}
 
-	self.brain:pushState(MeleeMob.walk)
+	self.brain:pushState(GuardMob.walk)
 
 	return self
 end
 
-function MeleeMob:update(dt)
+function GuardMob:update(dt)
 	self.brain:update(dt, self)
 end
 
-function MeleeMob:walk(dt)
+function GuardMob:walk(dt)
 	self.viewBox.x = (self.x + self.w / 2) - 45
 	self.viewBox.y = (self.y + self.h / 2) - 45
 	local viewX = self.viewBox.x
@@ -45,7 +46,7 @@ function MeleeMob:walk(dt)
   	if object.id == "player" then
   		-- print("player")
   		self.brain:popState()
-  		self.brain:pushState(MeleeMob.followThatBastard)
+  		self.brain:pushState(GuardMob.followThatBastard)
   	end
   end
 
@@ -78,7 +79,7 @@ function MeleeMob:walk(dt)
   end
 end
 
-function MeleeMob:watchThatBastard(dt)
+function GuardMob:watchThatBastard(dt)
 	self.viewBox.x = (self.x + self.w / 2) - 40
 	self.viewBox.y = (self.y + self.h / 2) - 40
 	local viewX = self.viewBox.x
@@ -97,11 +98,11 @@ function MeleeMob:watchThatBastard(dt)
 
   if playerFound == false then
   		self.brain:popState()
-  		self.brain:pushState(MeleeMob.walk)
+  		self.brain:pushState(GuardMob.walk)
   end
 end	
 
-function MeleeMob:followThatBastard(dt)
+function GuardMob:followThatBastard(dt)
 	self.speed = 70
 
 	self.viewBox.x = (self.x + self.w / 2) - 40
@@ -141,8 +142,8 @@ function MeleeMob:followThatBastard(dt)
 	  end
   else
   	self.brain:popState()
-  	self.brain:pushState(MeleeMob.walk)
+  	self.brain:pushState(GuardMob.walk)
   end
 end
 
-return MeleeMob
+return GuardMob

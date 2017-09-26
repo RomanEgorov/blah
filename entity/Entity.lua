@@ -7,9 +7,9 @@ function Entity:initialize(world, x, y)
 
 	self.x = x
 	self.y = y
-	self.w = 20
-	self.h = 20
-	self.speed = 80
+	self.w = 0
+	self.h = 0
+	self.speed = 0
 
 	-- brain
 end

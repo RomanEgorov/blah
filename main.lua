@@ -1,5 +1,5 @@
 local bump = require "bump"
-local MeleeMob = require "meleeMob"
+local GuardMob = require "entity.GuardMob"
 local EnemyBase = require "EnemyBase"
 local PathGraph = require "PathGraph"
 
@@ -74,7 +74,7 @@ local function addBlock(x,y,w,h)
 end
 
 local function addEnemy(x, y, w, h, speed)
-    local mob = MeleeMob.new(x, y, w, h, speed, world)
+    local mob = GuardMob:new(world, x, y)
     enemies[#enemies+1] = mob
 end
 
