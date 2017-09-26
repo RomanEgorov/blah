@@ -1,7 +1,7 @@
 local class = require "lib.middleclass"
 
 local Entity = require "entity.Entity"
-local MobBrain = require "MobBrain"
+local MobBrain = require "entity.AI.EntityBrain"
 
 local GuardMob = class("GuardMob", Entity)
 
@@ -40,43 +40,43 @@ function GuardMob:walk(dt)
 	local viewW = self.viewBox.w
 	local viewH = self.viewBox.h
 
-  local items, len = self.world:queryRect(viewX, viewY, viewW, viewH)
+    local items, len = self.world:queryRect(viewX, viewY, viewW, viewH)
 
-  for _, object in ipairs(items) do
-  	if object.id == "player" then
+    for _, object in ipairs(items) do
+  	    if object.id == "player" then
   		-- print("player")
-  		self.brain:popState()
-  		self.brain:pushState(GuardMob.followThatBastard)
-  	end
-  end
+  		    self.brain:popState()
+  		    self.brain:pushState(GuardMob.followThatBastard)
+  	    end
+    end
 
-  local dx, dy = 0, 0
+    local dx, dy = 0, 0
 
-  if self.y >= 500 then
-    self.yDirection = 'up'
-  elseif self.y <= 100 then
-    self.yDirection = 'down'
-  end
-  if self.x < 650 then
-  	self.xDirection = 'right'
-  elseif self.x > 650 then
-  	self.xDirection = 'left'
-  end
+    if self.y >= 500 then
+        self.yDirection = 'up'
+    elseif self.y <= 100 then
+        self.yDirection = 'down'
+    end
+    if self.x < 650 then
+        self.xDirection = 'right'
+    elseif self.x > 650 then
+        self.xDirection = 'left'
+    end
 
-  if self.xDirection == 'right' then
-    dx = self.speed * dt
-  elseif self.xDirection == 'left' then
-    dx = -self.speed * dt
-  end
-  if self.yDirection == 'up' then
-    dy = -self.speed * dt
-  elseif self.yDirection == 'down' then
-    dy = self.speed * dt
-  end
+    if self.xDirection == 'right' then
+        dx = self.speed * dt
+    elseif self.xDirection == 'left' then
+        dx = -self.speed * dt
+    end
+    if self.yDirection == 'up' then
+        dy = -self.speed * dt
+    elseif self.yDirection == 'down' then
+        dy = self.speed * dt
+    end
 
-  if dx ~= 0 or dy ~= 0 then
-    self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
-  end
+    if dx ~= 0 or dy ~= 0 then
+        self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
+    end
 end
 
 function GuardMob:watchThatBastard(dt)
