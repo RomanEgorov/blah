@@ -16,7 +16,7 @@ function Entity:initialize(world, x, y)
 
 	self.brain = EntityBrain:new()
 
-	-- self.pathGraph = PathGraph:new(world:getItems())
+	self.pathGraph = PathGraph:new(world.staticObjects)
 end
 
 return Entity

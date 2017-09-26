@@ -23,6 +23,8 @@ function GuardMob:initialize(world, x, y)
 
 	self.brain:pushState(GuardMob.walk)
 
+    self.patrolPoints = {}
+
 	return self
 end
 
@@ -30,22 +32,14 @@ function GuardMob:update(dt)
 	self.brain:update(dt, self)
 end
 
+function GuardMob:patrol(dt)
+
+end
+
 function GuardMob:walk(dt)
-	self.viewBox.x = (self.x + self.w / 2) - 45
-	self.viewBox.y = (self.y + self.h / 2) - 45
-	local viewX = self.viewBox.x
-	local viewY = self.viewBox.y
-	local viewW = self.viewBox.w
-	local viewH = self.viewBox.h
-
-    local items, len = self.world:queryRect(viewX, viewY, viewW, viewH)
-
-    for _, object in ipairs(items) do
-  	    if object.id == "player" then
-  		-- print("player")
-  		    self.brain:popState()
-  		    self.brain:pushState(GuardMob.followThatBastard)
-  	    end
+    if self:findPlayer() then
+        self.brain:popState()
+        self.brain:pushState(GuardMob.followThatBastard)
     end
 
     local dx, dy = 0, 0
@@ -142,6 +136,28 @@ function GuardMob:followThatBastard(dt)
   	self.brain:popState()
   	self.brain:pushState(GuardMob.walk)
   end
+end
+
+function GuardMob:findPlayer()
+    self.viewBox.x = (self.x + self.w / 2) - 45
+    self.viewBox.y = (self.y + self.h / 2) - 45
+    local viewX = self.viewBox.x
+    local viewY = self.viewBox.y
+    local viewW = self.viewBox.w
+    local viewH = self.viewBox.h
+
+    local items, len = self.world:queryRect(viewX, viewY, viewW, viewH)
+
+    for _, object in ipairs(items) do
+        if object.id == "player" then
+        -- print("player")
+            -- self.brain:popState()
+            -- self.brain:pushState(GuardMob.followThatBastard)
+            return true
+        end
+    end
+
+    return false
 end
 
 return GuardMob
