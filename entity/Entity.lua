@@ -21,4 +21,10 @@ function Entity:initialize(id, world, x, y)
 	self.pathGraph = PathGraph:new(world.staticObjects)
 end
 
+function Entity:move(dx, dy)
+  	if dx ~= 0 or dy ~= 0 then
+  	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
+  	end
+end
+
 return Entity
