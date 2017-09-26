@@ -31,13 +31,11 @@ local function drawPlayer()
     drawBox(player, 0, 255, 0)
     love.graphics.print("Game", player.x, player.y - 20)
 
-
     --    отрисовка точек
     for p = 1, #playerPath.nodes do
         love.graphics.points(playerPath.nodes[p][1], playerPath.nodes[p][2])
         love.graphics.setColor(250,195,125,250)
         love.graphics.print(p, playerPath.nodes[p][1], playerPath.nodes[p][2])
-        -- love.graphics.print(math.floor(weigths[p]), playerPath.nodes[p][1], playerPath.nodes[p][2]+15)
     end
 
 --    отрисовка линий

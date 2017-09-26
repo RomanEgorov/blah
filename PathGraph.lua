@@ -24,6 +24,7 @@ local function isLineCross(x1, y1, x2, y2, x3, y3, x4, y4)
     if (seg1_line2_start * seg1_line2_end >= 0 or seg2_line1_start * seg2_line1_end >= 0) then
         return false
     end
+    
     return true
 end
 
