@@ -1,6 +1,6 @@
 local bump = require "bump"
 local GuardMob = require "entity.GuardMob"
-local EnemyBase = require "EnemyBase"
+local ColonyBase = require "entity.ColonyBase"
 local SeekerMob = require "entity.SeekerMob"
 local PathGraph = require "PathGraph"
 
@@ -19,7 +19,7 @@ local playerPath = {}
 local pause = false
 local speedModifier = 1
 
--- local enemyBase = EnemyBase(world, 715, 515, 50, 50)
+local colonyBase = ColonyBase:new(world, 715, 515)
 
 local goToPoint = false
 
@@ -123,6 +123,11 @@ local function drawResources()
     end
 end
 
+local function drawColonyBase()
+    drawBox(colonyBase, 255, 255, 0)
+
+    love.graphics.print(colonyBase.energy, colonyBase.x + (colonyBase.w / 3), colonyBase.y + (colonyBase.h / 3))
+end
 
 local function updatePlayer(dt)
     local dx, dy = 0, 0
@@ -193,7 +198,7 @@ end
 -- Callbacks
 function love.load()
     world:add(player, player.x, player.y, player.w, player.h)
-    -- world:add(enemyBase, enemyBase.x, enemyBase.y, enemyBase.w, enemyBase.h)
+    world:add(colonyBase, colonyBase.x, colonyBase.y, colonyBase.w, colonyBase.h)
 
     addBlock(0,       0,     800, 32)
     addBlock(0,      32,      32, 600-32*2)
@@ -236,7 +241,7 @@ function love.update(dt)
     end
 
     updatePlayer(dt)
-    -- enemyBase:update(dt)
+    colonyBase:update(dt)
 
     for _, enemy in ipairs(enemies) do
     -- enemy:update(dt)
@@ -252,12 +257,11 @@ function love.update(dt)
 end
 
 function love.draw()
-  drawBlocks()
-  drawPlayer()
-  drawEnemies()
-  drawResources()
-
-  -- drawBox(enemyBase, 255, 255, 0)
+    drawBlocks()
+    drawPlayer()
+    drawEnemies()
+    drawResources()
+    drawColonyBase()
 end
 
 function love.keypressed(k)
@@ -296,7 +300,8 @@ function love.mousepressed(x, y)
         end
     end
 
-    goToPoint = false
+    goToPoint = true
 
-    playerPath:findPath(player, {love.mouse.getX(), love.mouse.getY()}) 
+    -- playerPath:findPath(player, {love.mouse.getX(), love.mouse.getY()}) 
+    playerPath:findPath(player, {x, y}) 
 end
