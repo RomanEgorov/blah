@@ -1,5 +1,7 @@
 local class = require "lib.middleclass"
 
+local EntityBrain = require "entity.AI.EntityBrain"
+
 local Entity = class("Entity")
 
 function Entity:initialize(world, x, y)
@@ -11,7 +13,7 @@ function Entity:initialize(world, x, y)
 	self.h = 0
 	self.speed = 0
 
-	-- brain
+	self.brain = EntityBrain:new()
 end
 
 return Entity

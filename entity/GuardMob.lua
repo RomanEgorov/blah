@@ -1,7 +1,6 @@
 local class = require "lib.middleclass"
 
 local Entity = require "entity.Entity"
-local MobBrain = require "entity.AI.EntityBrain"
 
 local GuardMob = class("GuardMob", Entity)
 
@@ -14,7 +13,6 @@ function GuardMob:initialize(world, x, y)
 
 	self.xDirection = 'none'
 	self.yDirection = 'down'
-	self.brain = MobBrain()
 
 	self.viewBox = {
 		x = (self.x + self.w / 2) - 50,
