@@ -27,6 +27,7 @@ function GuardMob:initialize(world, x, y)
     self.patrolPoints = {{x = 650, y = 100}, {x = 650, y = 500}, {x = 60, y = 350}}
     self.nextPatrolPoint = self.patrolPoints[1]
     self.nextPatrolPointIndex = 1
+    self.rebuildPath = true -- костыль
 end
 
 function GuardMob:update(dt)
@@ -37,7 +38,15 @@ function GuardMob:patrol(dt)
     self.speed = 180
 
     if self:findPlayer() then
+        self.rebuildPath = true
         self.brain:pushState(GuardMob.followThatBastard)
+
+        return
+    end
+
+    if self.rebuildPath then
+        self.pathGraph:findPath(self, {self.nextPatrolPoint.x, self.nextPatrolPoint.y})
+        self.rebuildPath = false
     end
 
     local dx, dy = 0, 0
@@ -163,6 +172,7 @@ function GuardMob:followThatBastard(dt)
 
         self:move(dx, dy)
     else
+        print("pop followThatBastard")
       	self.brain:popState()
   end
 end

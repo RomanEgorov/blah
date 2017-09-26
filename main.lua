@@ -212,6 +212,7 @@ function love.load()
 --    end
 
     addEnemy(650, 100, 20, 20, 60)
+    -- addEnemy(100, 100, 20, 20, 60)
 
     for _, enemy in ipairs(enemies) do
         world:add(enemy, enemy.x, enemy.y, enemy.w, enemy.h)
