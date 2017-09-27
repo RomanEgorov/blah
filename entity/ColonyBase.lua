@@ -11,7 +11,7 @@ function ColonyBase:initialize(world, x, y)
 	self.h = 40
 
 	self.energy = 10
-	self.energyConsumptionInterval = 2
+	self.energyConsumptionInterval = 1.5
 	self.timeAfterTick = 0.
 end
 
@@ -36,6 +36,20 @@ function ColonyBase:addEnergy()
 	end
 
 	self.energy = self.energy + 10
+end
+
+function ColonyBase:takeEnergy()
+	if not self.alive then
+		return 0
+	end
+
+	if self.energy > 10 then
+		self.energy = self.energy - 10
+
+		return 10
+	else
+		return 0
+	end
 end
 
 return ColonyBase
