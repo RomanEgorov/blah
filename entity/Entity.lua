@@ -18,6 +18,8 @@ function Entity:initialize(id, world, x, y)
 	self.h = 0
 	self.speed = 0
 
+	self.alive = true
+
 	self.brain = EntityBrain:new()
 
 	self.pathGraph = PathGraph:new(world.staticObjects)
