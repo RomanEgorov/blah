@@ -174,7 +174,7 @@ function GuardMob:followThatBastard(dt)
 
         self:move(dx, dy)
     else
-        print("pop followThatBastard")
+        -- print("pop followThatBastard")
       	self.brain:popState()
   end
 end
