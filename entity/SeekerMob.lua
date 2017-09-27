@@ -7,6 +7,8 @@ local SeekerMob = class("SeekerMob", Entity)
 function SeekerMob:initialize(world, x, y)
 	Entity.initialize(self, "SeekerMob", world, x, y)
 
+    self.resourceSpawner = nil
+
     self.drawColor = {r = 255, g = 0, b = 255}
 
 	self.w = 20
@@ -181,20 +183,26 @@ end
 function SeekerMob:_findResource()
     self.viewBox.x = (self.x + self.w / 2) - 45
     self.viewBox.y = (self.y + self.h / 2) - 45
-    local viewX = self.viewBox.x
-    local viewY = self.viewBox.y
-    local viewW = self.viewBox.w
-    local viewH = self.viewBox.h
+    -- local viewX = self.viewBox.x
+    -- local viewY = self.viewBox.y
+    -- local viewW = self.viewBox.w
+    -- local viewH = self.viewBox.h
 
-    local items, len = self.world:queryRect(viewX, viewY, viewW, viewH)
+    -- local items, len = self.world:queryRect(viewX, viewY, viewW, viewH)
 
-    for _, object in ipairs(items) do
-        if object.id == "resource" then
-            return true, object
-        end
+    -- for _, object in ipairs(items) do
+    --     if object.id == "resource" then
+    --         return true, object
+    --     end
+    -- end
+
+    local res = self.resourceSpawner:checkResourcesIn(self.viewBox)
+
+    if res == nil then
+        return false, {}
+    else
+        return true, res
     end
-
-    return false, {}
 end
 
 return SeekerMob

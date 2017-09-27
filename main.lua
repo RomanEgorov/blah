@@ -72,6 +72,7 @@ local function addSeekerEnemy(x, y)
     local mob = SeekerMob(world, x, y)
     local colonyX, colonyY = colonyBase:getCenterCoords()
     mob.colonyBaseCoords = {x = colonyX, y = colonyY}
+    mob.resourceSpawner = resourceSpawner
     enemies[#enemies+1] = mob
 end
 
