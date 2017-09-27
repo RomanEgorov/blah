@@ -47,9 +47,7 @@ function SeekerMob:seekResource(dt)
 
   	local dx, dy = self:_randomNavigation(dt)
 
-  	if dx ~= 0 or dy ~= 0 then
-  	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
-  	end
+    self:move(dx, dy)
 end
 
 function SeekerMob:grabResource(dt)

@@ -67,6 +67,9 @@ local function drawEnemies()
     for _, enemy in ipairs(enemies) do
         drawBox(enemy, 0, 0, 255)
         drawBox(enemy.viewBox, 55, 55, 55)
+        love.graphics.setColor(125, 125, 125)
+        love.graphics.setPointSize(2)
+        love.graphics.points(enemy:getCenterCoords())
 
         -- if enemy.patrolPoints ~= nil then
         --     love.graphics.setPointSize(4)
@@ -207,13 +210,13 @@ function love.load()
 
     spawnResource()
 
-       for i=1,blockCount do
-         addBlock( math.random(100, 600),
+    for i=1,blockCount do
+        addBlock( math.random(100, 600),
                    math.random(100, 400),
                    math.random(10, 100),
                    math.random(10, 100)
          )
-       end
+    end
 
 
 --    for i = 1, 6 do
@@ -224,6 +227,10 @@ function love.load()
 
     addEnemy(650, 100, 20, 20, 60)
     addSeekerEnemy(100, 100)
+    -- addEnemy(100, 100, 20, 20, 60)
+    -- local mob = GuardMob:new(world, 100, 100)
+    -- mob.patrolPoints = {{x = 100, y = 100}, {x = 650, y = 500}}
+    -- enemies[#enemies+1] = mob
 
     for _, enemy in ipairs(enemies) do
         world:add(enemy, enemy.x, enemy.y, enemy.w, enemy.h)
