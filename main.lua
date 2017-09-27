@@ -9,8 +9,8 @@ local world = bump.newWorld()
 local player = { id = "player", x = 50, y = 50, w = 40, h = 40, speed = 100 }
 local blocks = {}
 local enemies = {}
-local resources = {}
-local resourcesNum = 0
+resources = {}
+local resourcesNum = 10
 local lastResourceSpawn = 0
 local resourceSpawnInterval = 0.01
 local blockCount = 10
@@ -33,7 +33,7 @@ end
 
 local function drawPlayer()
     drawBox(player, 0, 255, 0)
-    love.graphics.print("Game", player.x, player.y - 20)
+    -- love.graphics.print("Game", player.x, player.y - 20)
 
     --    отрисовка точек
 --     for p = 1, #playerPath.nodes do
@@ -65,7 +65,8 @@ end
 
 local function drawEnemies()
     for _, enemy in ipairs(enemies) do
-        drawBox(enemy, 0, 0, 255)
+
+        drawBox(enemy, enemy.drawColor.r, enemy.drawColor.g, enemy.drawColor.b)
         drawBox(enemy.viewBox, 55, 55, 55)
         love.graphics.setColor(125, 125, 125)
         love.graphics.setPointSize(2)
@@ -95,6 +96,8 @@ end
 
 local function addSeekerEnemy(x, y)
     local mob = SeekerMob(world, x, y)
+    local colonyX, colonyY = colonyBase:getCenterCoords()
+    mob.colonyBaseCoords = {x = colonyX, y = colonyY}
     enemies[#enemies+1] = mob
 end
 
@@ -110,8 +113,12 @@ local function spawnResource()
                 h = 10
             }
 
-            resources[i] = resource
-            world:add(resource, resource.x, resource.y, resource.w, resource.h)
+            local items, len = world:queryRect(resource.x, resource.y, resource.w, resource.h)
+
+            if len == 0 then
+                resources[i] = resource
+                world:add(resource, resource.x, resource.y, resource.w, resource.h)
+            end
 
             break
         end
@@ -297,11 +304,12 @@ function love.keypressed(k)
 end
 
 function love.mousepressed(x, y)
-    items, len = world:queryRect(x, y, 10, 10)
+    local items, len = world:queryRect(x, y, 10, 10)
 
     if len > 0 then
         for _, item in ipairs(items) do
             if item.id == "resource" then
+                world:remove(item)
                 resources[item.resourceId] = nil
             end
         end

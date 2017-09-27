@@ -31,6 +31,14 @@ function Entity:getCenterCoords()
 end
 
 function Entity:move(dx, dy)
+    self.viewBox.x = (self.x + self.w / 2) - 45
+    self.viewBox.y = (self.y + self.h / 2) - 45
+    local viewX = self.viewBox.x
+    local viewY = self.viewBox.y
+    local viewW = self.viewBox.w
+    local viewH = self.viewBox.h
+	
+
   	if dx ~= 0 or dy ~= 0 then
   	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
   	end
@@ -65,6 +73,34 @@ function Entity:moveTo(dest, dt)
     self:move(dx, dy)
 
     return dxy
+end
+
+function Entity:followPath(dt)
+	local dx, dy = 0, 0
+
+    if #self.pathGraph.path > 0 then
+        local pointX, pointY = self.pathGraph.path[1][1], self.pathGraph.path[1][2]
+
+        if #self.pathGraph.path then
+            dx = pointX - (self.x + self.w / 2)
+            dy = pointY - (self.y + self.h / 2)
+            local dxy = (dx^2 + dy^2)^0.5
+            
+            if dxy < 5 then
+                table.remove(self.pathGraph.path, 1)
+            else
+                dx = dx / dxy
+                dy = dy / dxy
+                if self.speed * dt < dxy then
+                    dxy = self.speed * dt
+                end
+                dx = dx * dxy
+                dy = dy * dxy
+            end
+        end
+    end
+
+    self:move(dx, dy)
 end
 
 return Entity

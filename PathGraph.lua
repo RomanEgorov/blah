@@ -65,7 +65,7 @@ function PathGraph:findPath(source, dest)
     for pp = 1, #paths[2] do
         local p = paths[2][pp]
         local px, py = self.nodes[p][1], self.nodes[p][2]
-        -- print('p', pp, px, py)
+        print('p', pp, px, py)
         table.insert(self.path, {px, py})
     end
 end
@@ -154,7 +154,7 @@ function PathGraph:_dijkstra()
 
     local nodes_open = {1}
 
-    -- print('count', #self.nodes)
+    print('count', #self.nodes)
     while #nodes_open > 0 do
         table.sort(nodes_open, function(a, b) return weigths[a] < weigths[b]  end)
         local p = nodes_open[1]

@@ -7,6 +7,8 @@ local GuardMob = class("GuardMob", Entity)
 function GuardMob:initialize(world, x, y)
     Entity.initialize(self, "GuardMob", world, x, y)
 
+    self.drawColor = {r = 0, g = 0, b = 255} 
+
 	self.w = 20
 	self.h = 20
 	self.speed = 180
