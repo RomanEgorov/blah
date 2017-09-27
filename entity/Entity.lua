@@ -10,6 +10,8 @@ function Entity:initialize(id, world, x, y)
 
 	self.world = world
 
+	self.drawColor = {r = 0, g = 0, b = 0}
+
 	self.x = x
 	self.y = y
 	self.w = 0
@@ -32,6 +34,37 @@ function Entity:move(dx, dy)
   	if dx ~= 0 or dy ~= 0 then
   	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
   	end
+end
+
+function Entity:moveTo(dest, dt)
+	if dest.x == nil or dest.y == nil then
+		return false
+	end
+
+    local pointX, pointY = dest.x, dest.y
+    local centerX, centerY = self:getCenterCoords()
+
+    local dx = pointX - centerX
+    local dy = pointY - centerY
+    local dxy = (dx^2 + dy^2)^0.5
+    
+    if dxy < 5 then
+        return dxy
+    else
+        dx = dx / dxy
+        dy = dy / dxy
+
+        if self.speed * dt < dxy then
+            dxy = self.speed * dt
+        end
+
+        dx = dx * dxy
+        dy = dy * dxy
+    end
+
+    self:move(dx, dy)
+
+    return dxy
 end
 
 return Entity
