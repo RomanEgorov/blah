@@ -69,7 +69,8 @@ end
 local function addSeekerEnemy(x, y)
     local mob = SeekerMob(world, x, y)
     local colonyX, colonyY = colonyBase:getCenterCoords()
-    mob.colonyBaseCoords = {x = colonyX, y = colonyY}
+    -- mob.colonyBaseCoords = {x = colonyX, y = colonyY}
+    mob.colonyBase = colonyBase
     mob.resourceSpawner = resourceSpawner
     enemies[#enemies+1] = mob
 end
@@ -83,7 +84,11 @@ local function drawResources()
 end
 
 local function drawColonyBase()
-    drawBox(colonyBase, 255, 255, 0)
+    if colonyBase.alive then
+        drawBox(colonyBase, 255, 255, 0)
+    else
+        drawBox(colonyBase, 55, 55, 55)
+    end
 
     love.graphics.print(colonyBase.energy, colonyBase.x + (colonyBase.w / 3), colonyBase.y + (colonyBase.h / 3))
 end

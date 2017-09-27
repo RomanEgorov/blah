@@ -13,7 +13,7 @@ function SeekerMob:initialize(world, x, y)
 
 	self.w = 20
 	self.h = 20
-	self.speed = 80
+	self.speed = 100
 
 	self.viewBox = {
 		x = (self.x + self.w / 2) - 50,
@@ -22,7 +22,7 @@ function SeekerMob:initialize(world, x, y)
 		h = 100
 	}
 
-    self.colonyBaseCoords = {}
+    self.colonyBase = {}
 
 	self.carryingResource = false
     self.resource = {}
@@ -137,11 +137,12 @@ function SeekerMob:returnResouce(dt)
     -- print("SeekerMob:returnResouce")
 
     local centerX, centerY = self:getCenterCoords()
-    local dx = self.colonyBaseCoords.x - centerX
-    local dy = self.colonyBaseCoords.y - centerY
+    local dx = self.colonyBase.x - centerX
+    local dy = self.colonyBase.y - centerY
     local dxy = (dx^2 + dy^2)^0.5
 
     if dxy < 40 then
+        self.colonyBase:addEnergy()
         self.carryingResource = false
         self.rebuildPath = true
         self.brain:popState()
@@ -153,7 +154,7 @@ function SeekerMob:returnResouce(dt)
     -- print("base coords: ", self.colonyBaseCoords.x, self.colonyBaseCoords.y)
     if self.rebuildPath then
         self.rebuildPath = false
-        self.pathGraph:findPath(self, {self.colonyBaseCoords.x, self.colonyBaseCoords.y})
+        self.pathGraph:findPath(self, {self.colonyBase.x, self.colonyBase.y})
     end
 
     self:followPath(dt)
