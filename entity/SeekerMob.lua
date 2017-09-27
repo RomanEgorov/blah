@@ -104,26 +104,28 @@ function SeekerMob:seekResource(dt)
 end
 
 function SeekerMob:grabResource(dt)
-	print("SeekerMob:grabResource()")
+	-- print("SeekerMob:grabResource()")
 
-    print(self.resource.x, self.resource.y)
+    -- print(self.resource.x, self.resource.y)
     if self:moveTo(self.resource, dt) > 2 then
-        print("moving to")
+        -- print("moving to")
     else
-        print("stop")
+        -- print("stop")
         self.carryingResource = true
 
-        local items, len = self.world:queryRect(self.resource.x, self.resource.y, self.resource.w, self.resource.h)
+        -- local items, len = self.world:queryRect(self.resource.x, self.resource.y, self.resource.w, self.resource.h)
 
-        if len > 0 then
-            for _, item in ipairs(items) do
-                if item.id == "resource" then
-                    self.world:remove(item)
-                    resources[item.resourceId] = nil
+        -- if len > 0 then
+        --     for _, item in ipairs(items) do
+        --         if item.id == "resource" then
+        --             self.world:remove(item)
+        --             resources[item.resourceId] = nil
 
-                end
-            end
-        end
+        --         end
+        --     end
+        -- end
+
+        self.resourceSpawner:removeResource(self.resource)
 
         self.brain:popState()
         self.rebuildPath = true
@@ -183,18 +185,6 @@ end
 function SeekerMob:_findResource()
     self.viewBox.x = (self.x + self.w / 2) - 45
     self.viewBox.y = (self.y + self.h / 2) - 45
-    -- local viewX = self.viewBox.x
-    -- local viewY = self.viewBox.y
-    -- local viewW = self.viewBox.w
-    -- local viewH = self.viewBox.h
-
-    -- local items, len = self.world:queryRect(viewX, viewY, viewW, viewH)
-
-    -- for _, object in ipairs(items) do
-    --     if object.id == "resource" then
-    --         return true, object
-    --     end
-    -- end
 
     local res = self.resourceSpawner:checkResourcesIn(self.viewBox)
 

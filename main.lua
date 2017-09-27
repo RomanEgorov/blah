@@ -18,8 +18,6 @@ local blockCount = 10
 
 local enemies = {}
 
-resources = {}
-
 local pause = false
 local speedModifier = 1
 

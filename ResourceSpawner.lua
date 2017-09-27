@@ -58,4 +58,8 @@ function ResourceSpawner:checkResourcesIn(area)
 	return nil
 end
 
+function ResourceSpawner:removeResource(res)
+	self.resources[res.resourceId] = nil
+end
+
 return ResourceSpawner
