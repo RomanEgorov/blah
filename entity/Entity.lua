@@ -31,17 +31,12 @@ function Entity:getCenterCoords()
 end
 
 function Entity:move(dx, dy)
-    self.viewBox.x = (self.x + self.w / 2) - 45
-    self.viewBox.y = (self.y + self.h / 2) - 45
-    local viewX = self.viewBox.x
-    local viewY = self.viewBox.y
-    local viewW = self.viewBox.w
-    local viewH = self.viewBox.h
-	
-
   	if dx ~= 0 or dy ~= 0 then
   	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
-  	end
+    end
+
+    self.viewBox.x = (self.x + self.w / 2) - self.viewBox.w/2
+    self.viewBox.y = (self.y + self.h / 2) - self.viewBox.h/2
 end
 
 function Entity:moveTo(dest, dt)

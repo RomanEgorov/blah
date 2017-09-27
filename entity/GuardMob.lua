@@ -47,7 +47,7 @@ function GuardMob:patrol(dt)
     end
 
     if self.rebuildPath then
-        self.pathGraph:findPath(self, {self.nextPatrolPoint.x, self.nextPatrolPoint.y})
+        self.pathGraph:buildPath(self, self.nextPatrolPoint)
         self.rebuildPath = false
     end
 
@@ -67,7 +67,7 @@ function GuardMob:patrol(dt)
 
         self.nextPatrolPoint = self.patrolPoints[self.nextPatrolPointIndex]
 
-        self.pathGraph:findPath(self, {self.nextPatrolPoint.x, self.nextPatrolPoint.y})
+        self.pathGraph:buildPath(self, self.nextPatrolPoint)
     end
 
     if #self.pathGraph.path > 0 then

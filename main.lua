@@ -318,5 +318,5 @@ function love.mousepressed(x, y)
     goToPoint = true
 
     -- playerPath:findPath(player, {love.mouse.getX(), love.mouse.getY()}) 
-    playerPath:findPath(player, {x, y}) 
+    playerPath:buildPath(player, {x=x, y=y})
 end
