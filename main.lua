@@ -49,7 +49,12 @@ local function drawEnemies()
         drawBox(enemy.viewBox, 55, 55, 55)
         love.graphics.setColor(125, 125, 125)
         love.graphics.setPointSize(2)
-        love.graphics.points(enemy:getCenterCoords())
+        local x, y = enemy:getCenterCoords()
+        love.graphics.points(x, y)
+        love.graphics.print(enemy.energy, x, y)
+        love.graphics.setPointSize(4)
+        love.graphics.setColor(255, 0, 0)
+        love.graphics.points(enemy.destinationPoint.x, enemy.destinationPoint.y)
     end
 end
 

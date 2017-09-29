@@ -27,7 +27,7 @@ function SeekerMob:initialize(world, x, y)
 	self.carryingResource = false
     self.resource = {}
 
-    self.patrolPoints = {{x = 650, y = 100}, {x = 650, y = 500}, {x = 60, y = 350}}
+    self.patrolPoints = {{x = 650, y = 500}, {x = 60, y = 450}, {x = 300, y = 60}}
     self.nextPatrolPoint = self.patrolPoints[1]
     self.nextPatrolPointIndex = 1
     self.rebuildPath = true -- костыль
@@ -36,16 +36,31 @@ function SeekerMob:initialize(world, x, y)
 end
 
 function SeekerMob:update(dt)
+    if self.energy <= 0 then
+        self.alive = false
+        return
+    end
+
+    self.energy = self.energy - (dt / 2)
+
+    -- print("seeker energy: ", self.energy)
+
 	self.brain:update(dt, self)
 end
 
 function SeekerMob:seekResource(dt) 
+    -- print("seekResource")
+    if self.energy < 10 then
+        self.rebuildPath = true
+        self.brain:pushState(SeekerMob.goToEat)
+
+        return
+    end
+
     local resourceFound, resource = self:_findResource()
 
     if resourceFound then
-        -- self.rebuildPath = true
-        -- self.brain:pushState(GuardMob.followThatBastard)
-
+        self.rebuildPath = true
         self.resource = resource
 
         self.brain:popState()
@@ -80,6 +95,7 @@ function SeekerMob:seekResource(dt)
 
     if #self.pathGraph.path > 0 then
         local pointX, pointY = self.pathGraph.path[1][1], self.pathGraph.path[1][2]
+        self.destinationPoint = {x = pointX, y = pointY}
 
         if #self.pathGraph.path then
             dx = pointX - (self.x + self.w / 2)
@@ -104,6 +120,14 @@ function SeekerMob:seekResource(dt)
 end
 
 function SeekerMob:grabResource(dt)
+    -- print("grabResource")
+    if self.energy < 10 then
+        self.rebuildPath = true
+        self.brain:pushState(SeekerMob.goToEat)
+
+        return
+    end
+    
 	-- print("SeekerMob:grabResource()")
 
     -- print(self.resource.x, self.resource.y)
@@ -134,6 +158,14 @@ function SeekerMob:grabResource(dt)
 end
 
 function SeekerMob:returnResouce(dt)
+    -- print("returnResouce")
+    if self.energy < 10 then
+        self.rebuildPath = true
+        self.brain:pushState(SeekerMob.goToEat)
+
+        return
+    end
+    
     -- print("SeekerMob:returnResouce")
 
     local centerX, centerY = self:getCenterCoords()
@@ -160,27 +192,36 @@ function SeekerMob:returnResouce(dt)
     self:followPath(dt)
 end
 
-function SeekerMob:fleeToBase(dt)
--- координаты базы?
-end
+function SeekerMob:fleeToBase(dt) end
 
-function SeekerMob:_randomNavigation(dt)
-  	local xRand = math.random(1, 90)
-  	local yRand = math.random(1, 90)
-  	local dx, dy = 0, 0
+function SeekerMob:goToEat(dt)
+    -- print("goToEat()")
+    if not self.alive then
+        return self.brain:popState()
+    end
 
-  	if xRand > 0 and xRand < 31 then
-  		dx = self.speed * dt
-  	elseif xRand > 30 and xRand < 61 then
-  		dx = -self.speed * dt
-  	end
-  	if yRand > 0 and xRand < 31 then
-  		dy = -self.speed * dt
-  	elseif yRand > 30 and xRand < 61 then
-  		dy = self.speed * dt
-  	end
+    local centerX, centerY = self:getCenterCoords()
+    local dx = self.colonyBase.x - centerX
+    local dy = self.colonyBase.y - centerY
+    local dxy = (dx^2 + dy^2)^0.5
 
-  	return dx, dy
+    if dxy < 40 then
+        -- print("dxy: ", dxy)
+        self.energy = self.energy + self.colonyBase:takeEnergy()
+
+        self.brain:popState()
+        self.rebuildPath = true
+
+        return
+    end
+
+    if self.rebuildPath then
+        print("rebuildingPath")
+        self.pathGraph:findPath(self, {self.colonyBase.x, self.colonyBase.y})
+        self.rebuildPath = false
+    end
+
+    self:followPath(dt)
 end
 
 function SeekerMob:_findResource()
@@ -195,5 +236,6 @@ function SeekerMob:_findResource()
         return true, res
     end
 end
+
 
 return SeekerMob

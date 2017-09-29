@@ -13,9 +13,6 @@ function GuardMob:initialize(world, x, y)
 	self.h = 20
 	self.speed = 180
 
-	self.xDirection = 'none'
-	self.yDirection = 'down'
-
 	self.viewBox = {
 		x = (self.x + self.w / 2) - 50,
 		y = (self.y + self.h / 2) - 50,
@@ -38,6 +35,10 @@ end
 
 function GuardMob:patrol(dt)
     self.speed = 180
+
+    -- if self.energy < 10 then
+    --     self.brain:push(GuardMob:goToEat)
+    -- end
 
     if self:findPlayer() then
         self.rebuildPath = true
