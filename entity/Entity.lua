@@ -36,8 +36,8 @@ function Entity:getCenterCoords()
 end
 
 function Entity:move(dx, dy)
-    self.viewBox.x = (self.x + self.w / 2) - 45
-    self.viewBox.y = (self.y + self.h / 2) - 45
+    self.viewBox.x = (self.x + self.w / 2) - 100
+    self.viewBox.y = (self.y + self.h / 2) - 100
     local viewX = self.viewBox.x
     local viewY = self.viewBox.y
     local viewW = self.viewBox.w

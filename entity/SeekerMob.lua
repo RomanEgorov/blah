@@ -11,15 +11,15 @@ function SeekerMob:initialize(world, x, y)
 
     self.drawColor = {r = 255, g = 0, b = 255}
 
-	self.w = 20
-	self.h = 20
+	self.w = 10
+	self.h = 10
 	self.speed = 100
 
 	self.viewBox = {
 		x = (self.x + self.w / 2) - 50,
 		y = (self.y + self.h / 2) - 50,
-		w = 100,
-		h = 100
+		w = 200,
+		h = 200
 	}
 
     self.colonyBase = {}
@@ -225,8 +225,8 @@ function SeekerMob:goToEat(dt)
 end
 
 function SeekerMob:_findResource()
-    self.viewBox.x = (self.x + self.w / 2) - 45
-    self.viewBox.y = (self.y + self.h / 2) - 45
+    self.viewBox.x = (self.x + self.w / 2) - 100
+    self.viewBox.y = (self.y + self.h / 2) - 100
 
     local res = self.resourceSpawner:checkResourcesIn(self.viewBox)
 

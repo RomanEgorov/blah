@@ -7,7 +7,7 @@ local ResourceSpawner = require "ResourceSpawner"
 
 local world = bump.newWorld()
 
-local resourceSpawner = ResourceSpawner:new(world)
+resourceSpawner = ResourceSpawner:new(world)
 
 local player = { id = "player", x = 50, y = 50, w = 40, h = 40, speed = 100 }
 local playerPath = {}
@@ -16,7 +16,7 @@ local goToPoint = false
 local blocks = {}
 local blockCount = 10
 
-local enemies = {}
+enemies = {}
 
 local pause = false
 local speedModifier = 1
@@ -155,7 +155,9 @@ local function updatePlayer(dt)
 end
 
 local function updateEnemy(enemy, dt)
-  enemy:update(dt)
+    enemy:update(dt)
+
+    -- print("enemies num: ", #enemies)
 end
 
 local function drawBlocks()
