@@ -13,9 +13,6 @@ function GuardMob:initialize(world, x, y)
 	self.h = 20
 	self.speed = 180
 
-	self.xDirection = 'none'
-	self.yDirection = 'down'
-
 	self.viewBox = {
 		x = (self.x + self.w / 2) - 50,
 		y = (self.y + self.h / 2) - 50,
@@ -38,6 +35,10 @@ end
 
 function GuardMob:patrol(dt)
     self.speed = 180
+
+    -- if self.energy < 10 then
+    --     self.brain:push(GuardMob:goToEat)
+    -- end
 
     if self:findPlayer() then
         self.rebuildPath = true
@@ -95,41 +96,6 @@ function GuardMob:patrol(dt)
     self:move(dx, dy)
 end
 
-function GuardMob:walk(dt)
-    if self:findPlayer() then
-        self.brain:popState()
-        self.brain:pushState(GuardMob.followThatBastard)
-    end
-
-    local dx, dy = 0, 0
-
-    if self.y >= 500 then
-        self.yDirection = 'up'
-    elseif self.y <= 100 then
-        self.yDirection = 'down'
-    end
-    if self.x < 650 then
-        self.xDirection = 'right'
-    elseif self.x > 650 then
-        self.xDirection = 'left'
-    end
-
-    if self.xDirection == 'right' then
-        dx = self.speed * dt
-    elseif self.xDirection == 'left' then
-        dx = -self.speed * dt
-    end
-    if self.yDirection == 'up' then
-        dy = -self.speed * dt
-    elseif self.yDirection == 'down' then
-        dy = self.speed * dt
-    end
-
-    if dx ~= 0 or dy ~= 0 then
-        self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
-    end
-end
-
 function GuardMob:watchThatBastard(dt)
 	self.viewBox.x = (self.x + self.w / 2) - 40
 	self.viewBox.y = (self.y + self.h / 2) - 40
@@ -174,7 +140,7 @@ function GuardMob:followThatBastard(dt)
 
         self:move(dx, dy)
     else
-        print("pop followThatBastard")
+        -- print("pop followThatBastard")
       	self.brain:popState()
   end
 end

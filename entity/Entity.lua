@@ -18,9 +18,14 @@ function Entity:initialize(id, world, x, y)
 	self.h = 0
 	self.speed = 0
 
+	self.alive = true
+	self.energy = 20
+
 	self.brain = EntityBrain:new()
 
 	self.pathGraph = PathGraph:new(world.staticObjects)
+
+	self.destinationPoint = {}
 end
 
 function Entity:getCenterCoords()
@@ -31,12 +36,18 @@ function Entity:getCenterCoords()
 end
 
 function Entity:move(dx, dy)
+    self.viewBox.x = (self.x + self.w / 2) - 100
+    self.viewBox.y = (self.y + self.h / 2) - 100
+    local viewX = self.viewBox.x
+    local viewY = self.viewBox.y
+    local viewW = self.viewBox.w
+    local viewH = self.viewBox.h
+	
+
   	if dx ~= 0 or dy ~= 0 then
   	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
-    end
-
-    self.viewBox.x = (self.x + self.w / 2) - self.viewBox.w/2
-    self.viewBox.y = (self.y + self.h / 2) - self.viewBox.h/2
+        -- self.destinationPoint = {x = self.x, y = self.y}
+  	end
 end
 
 function Entity:moveTo(dest, dt)
@@ -75,6 +86,8 @@ function Entity:followPath(dt)
 
     if #self.pathGraph.path > 0 then
         local pointX, pointY = self.pathGraph.path[1][1], self.pathGraph.path[1][2]
+        -- print("going to: ", pointX, pointY)
+        self.destinationPoint = {x = pointX, y = pointY}
 
         if #self.pathGraph.path then
             dx = pointX - (self.x + self.w / 2)

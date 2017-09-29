@@ -46,7 +46,6 @@ end
 
 local PathGraph = class("PathGraph")
 
---- TODO: Ром, этот кусок "документации" на тебе
 function PathGraph:initialize(staticObjects) 
 	self.dest = {575, 500}
 	self.path = {}
@@ -81,6 +80,7 @@ function PathGraph:buildPath(source, dest)
     for pp = 1, #paths[2] do
         local p = paths[2][pp]
         local px, py = self.nodes[p][1], self.nodes[p][2]
+
         table.insert(self.path, {px, py})
     end
 end
@@ -166,7 +166,7 @@ end
 --
 -- Алгоритм определяет кратчайший путь на взвешанном графе из начального узла (№1) в конечный (№2).
 -- Резльтат работы сохраняется в self.path как массив массивов.
-function PathGraph:_dijkstras()
+function PathGraph:_dijkstra()
     local weigths = {0}
     local nodes_close = {false}
     local paths = {{1}}
@@ -177,6 +177,7 @@ function PathGraph:_dijkstras()
     end
 
     local nodes_open = {1}
+    
     while #nodes_open > 0 do
         table.sort(nodes_open, function(a, b) return weigths[a] < weigths[b]  end)
         local p = nodes_open[1]
