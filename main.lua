@@ -168,6 +168,8 @@ end
 
 -- Callbacks
 function love.load()
+    math.randomseed(os.time())
+
     world:add(player, player.x, player.y, player.w, player.h)
     world:add(colonyBase, colonyBase.x, colonyBase.y, colonyBase.w, colonyBase.h)
 
