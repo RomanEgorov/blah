@@ -55,6 +55,11 @@ local function drawEnemies()
         love.graphics.setPointSize(4)
         love.graphics.setColor(255, 0, 0)
         love.graphics.points(enemy.destinationPoint.x, enemy.destinationPoint.y)
+
+        love.graphics.setColor(0, 255, 0)
+        for _, point in ipairs(enemy.patrolPoints) do
+            love.graphics.points(point.x, point.y)
+        end
     end
 end
 
