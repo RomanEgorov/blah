@@ -207,7 +207,7 @@ function SeekerMob:goToEat(dt)
 
     if dxy < 40 then
         -- print("dxy: ", dxy)
-        self.energy = self.energy + self.colonyBase:takeEnergy()
+        self.energy = self.energy + (self.colonyBase:takeEnergy() * 2)
 
         self.brain:popState()
         self.rebuildPath = true
