@@ -11,7 +11,7 @@ function ColonyBase:initialize(world, x, y)
 	self.w = 40
 	self.h = 40
 
-	self.energy = 95
+	self.energy = 50
 	self.energyConsumptionInterval = 2
 	self.timeAfterTick = 0.
 end

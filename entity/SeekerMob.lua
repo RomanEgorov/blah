@@ -186,7 +186,7 @@ function SeekerMob:returnResouce(dt)
     -- print("base coords: ", self.colonyBaseCoords.x, self.colonyBaseCoords.y)
     if self.rebuildPath then
         self.rebuildPath = false
-        self.pathGraph:findPath(self, {self.colonyBase.x, self.colonyBase.y})
+        self.pathGraph:buildPath(self, {x = self.colonyBase.x, y = self.colonyBase.y})
     end
 
     self:followPath(dt)
@@ -217,7 +217,7 @@ function SeekerMob:goToEat(dt)
 
     if self.rebuildPath then
         print("rebuildingPath")
-        self.pathGraph:findPath(self, {self.colonyBase.x, self.colonyBase.y})
+        self.pathGraph:buildPath(self, {x = self.colonyBase.x, y = self.colonyBase.y})
         self.rebuildPath = false
     end
 
