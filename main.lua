@@ -2,6 +2,7 @@ local bump = require "bump"
 local GuardMob = require "entity.GuardMob"
 local ColonyBase = require "entity.ColonyBase"
 local SeekerMob = require "entity.SeekerMob"
+local TestMob = require "entity.TestMob"
 local PathGraph = require "PathGraph"
 local ResourceSpawner = require "ResourceSpawner"
 
@@ -56,10 +57,10 @@ local function drawEnemies()
         love.graphics.setColor(255, 0, 0)
         love.graphics.points(enemy.destinationPoint.x, enemy.destinationPoint.y)
 
-        love.graphics.setColor(0, 255, 0)
-        for _, point in ipairs(enemy.patrolPoints) do
-            love.graphics.points(point.x, point.y)
-        end
+--        love.graphics.setColor(0, 255, 0)
+--        for _, point in ipairs(enemy.patrolPoints) do
+--            love.graphics.points(point.x, point.y)
+--        end
     end
 end
 
@@ -193,7 +194,9 @@ function love.load()
          )
     end
 
-    addEnemy(650, 100, 20, 20, 60)
+    -- addEnemy(650, 100, 20, 20, 60)
+    enemies[#enemies+1] = TestMob:new(world, 50, 300)
+
     addSeekerEnemy(100, 100)
     -- addEnemy(100, 100, 20, 20, 60)
     -- local mob = GuardMob:new(world, 100, 100)
