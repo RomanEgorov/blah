@@ -4,6 +4,7 @@ local Entity = require "entity.Entity"
 local BehaviorSystem = require "entity.AI.behavior.BehaviorSystem"
 local PatrolBehavior = require "entity.AI.behavior.PatrolBehavior"
 local GuardBehavior = require "entity.AI.behavior.GuardBehavior"
+local AvoidBehavior = require "entity.AI.behavior.AvoidBehavior"
 
 local TestMob = class("TestMob", Entity)
 
