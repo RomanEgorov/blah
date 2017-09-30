@@ -4,9 +4,13 @@ local Behavior = require "entity.AI.behavior.Behavior"
 local PatrolBehavior = class("PatrolBehavior")
 
 function PatrolBehavior:initialize(patrolPoints)
+    Behavior.initialize(self)
     self.patrolPoints = patrolPoints
     self.nextPatrolPoint = self.patrolPoints[1]
     self.nextPatrolPointIndex = 1
+    self.states_descriptors = {}
+    self.states_descriptors[PatrolBehavior.patrol] = {priority = 1, dependencies = {'move'} }
+    self.current_state = PatrolBehavior.patrol
 end
 
 function PatrolBehavior:behave(dt, entity)
@@ -15,13 +19,6 @@ end
 
 function PatrolBehavior:patrol(dt, entity)
     entity.speed = 180
-
---    if self:findPlayer() then
---        self.rebuildPath = true
---        self.brain:pushState(GuardMob.followThatBastard)
---
---        return
---    end
 
     if entity.rebuildPath then
         entity.pathGraph:buildPath(entity, self.nextPatrolPoint)

@@ -5,12 +5,13 @@ local SeekerMob = require "entity.SeekerMob"
 local TestMob = require "entity.TestMob"
 local PathGraph = require "PathGraph"
 local ResourceSpawner = require "ResourceSpawner"
+local Player = require "Player"
 
 local world = bump.newWorld()
 
 resourceSpawner = ResourceSpawner:new(world)
 
-local player = { id = "player", x = 50, y = 50, w = 40, h = 40, speed = 100 }
+local player = Player:new(world, 50, 40)
 local playerPath = {}
 local goToPoint = false
 

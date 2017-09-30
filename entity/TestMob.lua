@@ -3,6 +3,7 @@ local class = require "lib.middleclass"
 local Entity = require "entity.Entity"
 local BehaviorSystem = require "entity.AI.behavior.BehaviorSystem"
 local PatrolBehavior = require "entity.AI.behavior.PatrolBehavior"
+local GuardBehavior = require "entity.AI.behavior.GuardBehavior"
 
 local TestMob = class("TestMob", Entity)
 
@@ -24,8 +25,9 @@ function TestMob:initialize(world, x, y)
 
     local patrolPoints = {{x = 650, y = 100}, {x = 650, y = 500}, {x = 60, y = 350}}
     local patrolBehavior = PatrolBehavior:new(patrolPoints)
+    local guardBehavior = GuardBehavior:new('player')
 
-    self.behaviorSystem = BehaviorSystem:new({patrolBehavior})
+    self.behaviorSystem = BehaviorSystem:new({patrolBehavior, guardBehavior})
 
 
 end
