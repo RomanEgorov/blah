@@ -4,12 +4,15 @@ local ColonyBase = require "entity.ColonyBase"
 local SeekerMob = require "entity.SeekerMob"
 local PathGraph = require "PathGraph"
 local ResourceSpawner = require "ResourceSpawner"
+local Grid = require "Grid"
 
 local world = bump.newWorld()
 
+local grid = Grid:new(world, 800, 600)
+
 resourceSpawner = ResourceSpawner:new(world)
 
-local player = { id = "player", x = 50, y = 50, w = 40, h = 40, speed = 100 }
+local player = { id = "player", x = 64, y = 96, w = 32, h = 32, speed = 100 }
 local playerPath = {}
 local goToPoint = false
 
@@ -21,7 +24,8 @@ enemies = {}
 local pause = false
 local speedModifier = 1
 
-local colonyBase = ColonyBase:new(world, 715, 515)
+-- local colonyBase = ColonyBase:new(world, 715, 515)
+local colonyBase = {}
 
 
 -- Helpers
@@ -115,7 +119,9 @@ local function updatePlayer(dt)
     end
 
     if love.keyboard.isDown('3') then
-        playerPath:findPath()
+        -- playerPath:findPath()
+        local cellIndices = {x = math.floor(player.x / 32), y = math.floor(player.y / 32)}
+        grid:findPath(cellIndices, grid.dest)
     end
 
     if #playerPath.path>0 then
@@ -176,25 +182,25 @@ function love.load()
     math.randomseed(os.time())
 
     world:add(player, player.x, player.y, player.w, player.h)
-    world:add(colonyBase, colonyBase.x, colonyBase.y, colonyBase.w, colonyBase.h)
+    -- world:add(colonyBase, colonyBase.x, colonyBase.y, colonyBase.w, colonyBase.h)
 
     addBlock(0,       0,     800, 32)
     addBlock(0,      32,      32, 600-32*2)
     addBlock(800-32, 32,      32, 600-32*2)
     addBlock(0,      600-32, 800, 32)
 
-    resourceSpawner:spawnResource()
+    -- resourceSpawner:spawnResource()
 
-    for i=1,blockCount do
-        addBlock( math.random(100, 600),
-                   math.random(100, 400),
-                   math.random(10, 100),
-                   math.random(10, 100)
-         )
-    end
+    -- for i=1,blockCount do
+    --     addBlock( math.random(100, 600),
+    --                math.random(100, 400),
+    --                math.random(10, 100),
+    --                math.random(10, 100)
+    --      )
+    -- end
 
-    addEnemy(650, 100, 20, 20, 60)
-    addSeekerEnemy(100, 100)
+    -- addEnemy(650, 100, 20, 20, 60)
+    -- addSeekerEnemy(100, 100)
     -- addEnemy(100, 100, 20, 20, 60)
     -- local mob = GuardMob:new(world, 100, 100)
     -- mob.patrolPoints = {{x = 100, y = 100}, {x = 650, y = 500}}
@@ -206,6 +212,8 @@ function love.load()
     end
 
     playerPath = PathGraph:new(world.staticObjects)
+
+    grid:findPath({x = 2, y = 3}, grid.dest)
 end
 
 function love.update(dt)
@@ -216,7 +224,7 @@ function love.update(dt)
     end
 
     updatePlayer(dt)
-    colonyBase:update(dt)
+    -- colonyBase:update(dt)
 
     for _, enemy in ipairs(enemies) do
     -- enemy:update(dt)
@@ -229,9 +237,11 @@ end
 function love.draw()
     drawBlocks()
     drawPlayer()
-    drawEnemies()
-    drawResources()
-    drawColonyBase()
+    -- drawEnemies()
+    -- drawResources()
+    -- drawColonyBase()
+
+    grid:draw()
 end
 
 function love.keypressed(k)
