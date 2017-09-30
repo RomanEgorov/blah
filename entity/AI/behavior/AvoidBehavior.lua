@@ -8,7 +8,7 @@ function AvoidBehavior:initialize(target_id)
     self.target_id = target_id
     self.states_descriptors = {}
     self.states_descriptors[AvoidBehavior.lookupTarget] = {priority = 1}
-    self.states_descriptors[AvoidBehavior.followTarget] = {priority = 2, dependencies = {'move'}}
+    self.states_descriptors[AvoidBehavior.followTarget] = {priority = 3, dependencies = {'move'}}
     self.current_state = AvoidBehavior.lookupTarget
 end
 

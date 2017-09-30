@@ -2,7 +2,6 @@ local bump = require "bump"
 local GuardMob = require "entity.GuardMob"
 local ColonyBase = require "entity.ColonyBase"
 local SeekerMob = require "entity.SeekerMob"
-local TestMob = require "entity.TestMob"
 local PathGraph = require "PathGraph"
 local ResourceSpawner = require "ResourceSpawner"
 local Player = require "Player"
@@ -195,8 +194,7 @@ function love.load()
          )
     end
 
-    -- addEnemy(650, 100, 20, 20, 60)
-    enemies[#enemies+1] = TestMob:new(world, 50, 300)
+     addEnemy(650, 100, 20, 20, 60)
 
     addSeekerEnemy(100, 100)
     -- addEnemy(100, 100, 20, 20, 60)
@@ -251,7 +249,7 @@ function love.keypressed(k)
         speedModifier = 3
     end
     if k == "r" then
-        speedModifier = 10
+        speedModifier = 0.1
     end
 
     if k == "p" then 
