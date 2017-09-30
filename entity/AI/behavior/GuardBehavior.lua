@@ -13,9 +13,7 @@ function GuardBehavior:initialize(target_id)
 end
 
 function GuardBehavior:behave(dt, entity)
-    if self.current_state ~= nil then
-        self:current_state(dt, entity)
-    end
+    Behavior.behave(self, dt, entity)
 end
 
 function GuardBehavior:lookupTarget(dt, entity)
@@ -40,27 +38,16 @@ function GuardBehavior:lookupTarget(dt, entity)
 end
 
 function GuardBehavior:followTarget(dt, entity)
-    entity.speed = 70
-
+    entity.speed = 100
     local targetFound, targetObject = self:findTarget(entity)
-
     if targetFound then
-        local dx, dy = 0, 0
-
         local entityX, entityY = entity:getCenterCoords()
         local targetX, targetY = targetObject:getCenterCoords()
-
-        if entityX - targetX > 0 then
-            dx = -entity.speed * dt
-        else
-            dx = entity.speed * dt
-        end
-        if entityY - targetY > 0 then
-            dy = -entity.speed * dt
-        else
-            dy = entity.speed * dt
-        end
-
+        local dx = targetX - entityX
+        local dy = targetY - entityY
+        local dxy = (dx^2 + dy^2)^0.5
+        dx = entity.speed * dt * dx / dxy
+        dy = entity.speed * dt * dy / dxy
         entity:move(dx, dy)
     else
         self.current_state = GuardBehavior.lookupTarget
