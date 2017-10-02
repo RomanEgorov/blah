@@ -74,7 +74,7 @@ function PathGraph:buildPath(source, dest)
 	-- self.dest = dest
 	self:_buildNodes()
 	self:_buildEdges()
-	local paths = self:_dijkstra()
+	local paths = self:_dijkstra_modified()
 
     self.path = {}
     for pp = 1, #paths[2] do
@@ -184,22 +184,64 @@ function PathGraph:_dijkstra()
         table.remove(nodes_open, 1)
         nodes_close[p] = true
         for l = 1, #self.edges do
-            if self.edges[l][1] == p and not nodes_close[self.edges[l][2]] then
+            local p2 = -1
+            if self.edges[l][1] == p then
+                p2 =  self.edges[l][2];
+            end
+            if self.edges[l][2] == p then
+                p2 =  self.edges[l][1];
+            end
+            if p2 ~= -1 and not nodes_close[p2] then
                 local new_weigth = weigths[p] + self.edges[l][3]
-                if new_weigth < weigths[self.edges[l][2]] then
-                    table.insert(nodes_open, self.edges[l][2])
-                    weigths[self.edges[l][2]] = new_weigth
-                    paths[self.edges[l][2]] = table_copy(paths[p])
-                    table.insert(paths[self.edges[l][2]], self.edges[l][2])
+                if new_weigth < weigths[p2] then
+                    table.insert(nodes_open, p2)
+                    weigths[p2] = new_weigth
+                    paths[p2] = table_copy(paths[p])
+                    table.insert(paths[p2], p2)
                 end
             end
-            if self.edges[l][2] == p and not nodes_close[self.edges[l][1]] then
+        end
+    end
+
+    return paths
+end
+
+function PathGraph:_dijkstra_modified()
+    local weigths = {0}
+    local nodes_close = {false}
+    local paths = {{1}}
+    for p = 2, #self.nodes do
+        weigths[p] = math.huge -- Очень большой вес
+        nodes_close[p] = false
+        paths[p] = {}
+    end
+
+    local nodes_open = {1}
+
+    while #nodes_open > 0 do
+        table.sort(nodes_open, function(a, b)
+            local dist_a = ((self.nodes[a][1] - self.nodes[2][1])^2 + (self.nodes[a][2] - self.nodes[2][2])^2)
+            local dist_b = ((self.nodes[b][1] - self.nodes[2][1])^2 + (self.nodes[b][2] - self.nodes[2][2])^2)
+            return dist_a < dist_b
+        end)
+        local p = nodes_open[1]
+        table.remove(nodes_open, 1)
+        nodes_close[p] = true
+        for l = 1, #self.edges do
+            local p2 = -1
+            if self.edges[l][1] == p then
+                p2 =  self.edges[l][2];
+            end
+            if self.edges[l][2] == p then
+                p2 =  self.edges[l][1];
+            end
+            if p2 ~= -1 and not nodes_close[p2] then
                 local new_weigth = weigths[p] + self.edges[l][3]
-                if new_weigth < weigths[self.edges[l][1]] then
-                    table.insert(nodes_open, self.edges[l][1])
-                    weigths[self.edges[l][1]] = new_weigth
-                    paths[self.edges[l][1]] = table_copy(paths[p])
-                    table.insert(paths[self.edges[l][1]], self.edges[l][1])
+                if new_weigth < weigths[p2] then
+                    table.insert(nodes_open, p2)
+                    weigths[p2] = new_weigth
+                    paths[p2] = table_copy(paths[p])
+                    table.insert(paths[p2], p2)
                 end
             end
         end
