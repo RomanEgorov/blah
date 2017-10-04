@@ -23,6 +23,8 @@ function Player:initialize(world, x, y)
 
     self.alive = true
 
+    self.viewBox = {x = 0, y = 0, w = 0, h = 0}           -- костыль
+
     self.gotoPoint = false
     self.pathGraph = PathGraph:new(world.staticObjects)
 
@@ -32,12 +34,12 @@ end
 function Player:update(dt)
     local dx, dy = 0, 0
 
-    if love.keyboard.isDown('1') and #playerPath.path then
-        goToPoint = true
+    if love.keyboard.isDown('1') and #self.pathGraph.path then
+        self.gotoPoint = true
     end
 
     if love.keyboard.isDown('2') then
-        goToPoint = false
+        self.gotoPoint = false
     end
 
     if love.keyboard.isDown('3') then
@@ -46,17 +48,23 @@ function Player:update(dt)
     self:followPath(dt)
 
     if love.keyboard.isDown('right') then
-        dx = player.speed * dt
+        dx = self.speed * dt
     elseif love.keyboard.isDown('left') then
-        dx = -player.speed * dt
+        dx = -self.speed * dt
     end
     if love.keyboard.isDown('down') then
-        dy = player.speed * dt
+        dy = self.speed * dt
     elseif love.keyboard.isDown('up') then
-        dy = -player.speed * dt
+        dy = -self.speed * dt
     end
 
     self:move(dx, dy)
+end
+
+function Player:goTo(x, y)
+    self.gotoPoint = true
+
+    self.pathGraph:buildPath(self, {x = x, y = y})
 end
 
 -- function Player:getCenterCoords()

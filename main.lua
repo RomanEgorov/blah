@@ -14,8 +14,6 @@ local world = bump.newWorld()
 resourceSpawner = ResourceSpawner:new(world)
 
 local player = Player:new(world, 50, 40)
-local playerPath = {}
-local goToPoint = false
 
 local blocks = {}
 local blockCount = 10
@@ -106,62 +104,6 @@ local function drawColonyBase()
     love.graphics.print(colonyBase.energy, colonyBase.x + (colonyBase.w / 3), colonyBase.y + (colonyBase.h / 3))
 end
 
-local function updatePlayer(dt)
-    local dx, dy = 0, 0
-
-    if love.keyboard.isDown('1') and #playerPath.path then
-        goToPoint = true
-    end
-
-    if love.keyboard.isDown('2') then
-        goToPoint = false
-    end
-
-    if love.keyboard.isDown('3') then
-        local cellIndices = {x = math.floor(player.x / 32), y = math.floor(player.y / 32)}
-    end
-
-    if #playerPath.path>0 then
-        local pointX, pointY = playerPath.path[1][1], playerPath.path[1][2]
-
-        if goToPoint and #playerPath.path then
-            dx = (pointX - player.x - player.w / 2)
-            dy = (pointY - player.y - player.h / 2)
-            local dxy = (dx^2 + dy^2)^0.5
-            if dxy < 5 then
-                table.remove(playerPath.path, 1)
-                if not #playerPath.path then
-                    goToPoint = false
-                    return
-                end
-            else
-                dx = dx / dxy
-                dy = dy / dxy
-                if player.speed * dt < dxy then
-                    dxy = player.speed * dt
-                end
-                dx = dx * dxy
-                dy = dy * dxy
-            end
-        end
-    end
-
-    if love.keyboard.isDown('right') then
-        dx = player.speed * dt
-    elseif love.keyboard.isDown('left') then
-        dx = -player.speed * dt
-    end
-    if love.keyboard.isDown('down') then
-        dy = player.speed * dt
-    elseif love.keyboard.isDown('up') then
-        dy = -player.speed * dt
-    end
-
-    if dx ~= 0 or dy ~= 0 then
-        player.x, player.y, cols, cols_len = world:move(player, player.x + dx, player.y + dy)
-    end
-end
-
 local function drawBlocks()
   for _,block in ipairs(blocks) do
     drawBox(block, 255,0,0)
@@ -207,7 +149,8 @@ function love.update(dt)
         dt = dt * speedModifier
     end
 
-    updatePlayer(dt)
+    -- updatePlayer(dt)
+    player:update(dt)
     colonyBase:update(dt)
     resourceSpawner:update(dt)
 
@@ -250,9 +193,5 @@ function love.keypressed(k)
 end
 
 function love.mousepressed(x, y)
-    goToPoint = true
-
-    local px, py = player.x + (player.w / 2), player.y + (player.h / 2)
-
-    playerPath:buildPath(player, {x=x, y=y})
+    player:goTo(x, y)
 end
