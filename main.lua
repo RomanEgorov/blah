@@ -4,7 +4,7 @@ local ColonyBase = require "entity.ColonyBase"
 local SeekerMob = require "entity.SeekerMob"
 local PathGraph = require "PathGraph"
 local ResourceSpawner = require "ResourceSpawner"
-local Player = require "Player"
+local Player = require "entity.Player"
 local TestMob = require "entity.TestMob"
 
 local world = bump.newWorld()
@@ -128,7 +128,7 @@ local function updatePlayer(dt)
             dx = (pointX - player.x - player.w / 2)
             dy = (pointY - player.y - player.h / 2)
             local dxy = (dx^2 + dy^2)^0.5
-            if dxy < 10 then
+            if dxy < 5 then
                 table.remove(playerPath.path, 1)
                 if not #playerPath.path then
                     goToPoint = false
