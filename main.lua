@@ -4,15 +4,15 @@ local ColonyBase = require "entity.ColonyBase"
 local SeekerMob = require "entity.SeekerMob"
 local PathGraph = require "PathGraph"
 local ResourceSpawner = require "ResourceSpawner"
-local Grid = require "Grid"
+-- local Grid = require "Grid"
 
 local world = bump.newWorld()
 
-local grid = Grid:new(world, 800, 600)
+-- local grid = Grid:new(world, 800, 600)
 
 resourceSpawner = ResourceSpawner:new(world)
 
-local player = { id = "player", x = 64, y = 96, w = 32, h = 32, speed = 100 }
+local player = { id = "player", x = 32, y = 96, w = 32, h = 32, speed = 100 }
 local playerPath = {}
 local goToPoint = false
 
@@ -38,7 +38,7 @@ end
 
 local function drawPlayer()
     drawBox(player, 0, 255, 0)
-    -- love.graphics.print("Game", player.x, player.y - 20)
+    love.graphics.print(player.x .. ", " .. player.y, player.x, player.y)
 
     --    отрисовка финальной точки
     love.graphics.points(playerPath.dest[1], playerPath.dest[2])
@@ -121,11 +121,11 @@ local function updatePlayer(dt)
     if love.keyboard.isDown('3') then
         -- playerPath:findPath()
         local cellIndices = {x = math.floor(player.x / 32), y = math.floor(player.y / 32)}
-        grid:findPath(cellIndices, grid.dest)
+        -- grid:findPath(cellIndices, grid.dest)
     end
 
     if #playerPath.path>0 then
-        local pointX, pointY = playerPath.path[1][1], playerPath.path[1][2]
+        local pointX, pointY = playerPath.nodes[playerPath.path[1]][1], playerPath.nodes[playerPath.path[1]][2]
 
         if goToPoint and #playerPath.path then
             dx = (pointX - player.x - player.w / 2)
@@ -191,13 +191,13 @@ function love.load()
 
     -- resourceSpawner:spawnResource()
 
-    -- for i=1,blockCount do
-    --     addBlock( math.random(100, 600),
-    --                math.random(100, 400),
-    --                math.random(10, 100),
-    --                math.random(10, 100)
-    --      )
-    -- end
+    for i=1,blockCount do
+        addBlock( math.random(100, 600),
+                   math.random(100, 400),
+                   math.random(10, 100),
+                   math.random(10, 100)
+         )
+    end
 
     -- addEnemy(650, 100, 20, 20, 60)
     -- addSeekerEnemy(100, 100)
@@ -213,7 +213,7 @@ function love.load()
 
     playerPath = PathGraph:new(world.staticObjects)
 
-    grid:findPath({x = 2, y = 3}, grid.dest)
+    -- grid:findPath({x = 1, y = 3}, grid.dest)
 end
 
 function love.update(dt)
@@ -241,7 +241,16 @@ function love.draw()
     -- drawResources()
     -- drawColonyBase()
 
-    grid:draw()
+    -- grid:draw()
+    -- print("nodes: ", playerPath.nodes[1])
+    -- if playerPath.nodes ~= nil then
+    --     for i = 1, #playerPath.nodes do
+    --         print("node: ", playerPath.nodes[i][1], playerPath.nodes[i][2])
+    --         love.graphics.setPointSize(4)
+    --         love.graphics.setColor(255, 0, 0)
+    --         love.graphics.points(playerPath.nodes[i][1], playerPath.nodes[i][2])
+    --     end
+    -- end
 end
 
 function love.keypressed(k)
@@ -273,5 +282,7 @@ function love.mousepressed(x, y)
     goToPoint = true
 
     -- playerPath:findPath(player, {love.mouse.getX(), love.mouse.getY()}) 
+    local px, py = player.x + (player.w / 2), player.y + (player.h / 2)
+
     playerPath:buildPath(player, {x=x, y=y})
 end

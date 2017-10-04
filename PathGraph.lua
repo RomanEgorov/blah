@@ -1,6 +1,42 @@
 local class = require "lib.middleclass"
 local math = require "math"
 
+function unwind_path ( flat_path, map, current_node )
+
+    if map [ current_node ] then
+        -- print("unwind_path current_node: ", current_node.x, current_node.y)
+        table.insert ( flat_path, 1, map [ current_node ] ) 
+        return unwind_path ( flat_path, map, map [ current_node ] )
+    else
+        return flat_path
+    end
+end
+
+function remove_node ( set, theNode )
+
+    for i, node in ipairs ( set ) do
+        if node == theNode then 
+            set [ i ] = set [ #set ]
+            set [ #set ] = nil
+            break
+        end
+    end 
+end
+
+local function dist ( x1, y1, x2, y2 )
+    return math.sqrt ( math.pow ( x2 - x1, 2 ) + math.pow ( y2 - y1, 2 ) )
+end
+
+local function hasItem(arr, item)
+    for _, arrItem in ipairs(arr) do
+        if arrItem == item then
+            return true
+        end
+    end
+
+    return false
+end
+
 --- Проверка двух отрезков на пересечение.
 --
 -- Отрезки имеют координаты:
@@ -74,21 +110,25 @@ function PathGraph:buildPath(source, dest)
 	-- self.dest = dest
 	self:_buildNodes()
 	self:_buildEdges()
-	local paths = self:_dijkstra()
+	-- local paths = self:_dijkstra()
 
-    self.path = {}
-    for pp = 1, #paths[2] do
-        local p = paths[2][pp]
-        local px, py = self.nodes[p][1], self.nodes[p][2]
+    self.path = self:_aStar()
+    -- self.path = {}
 
-        table.insert(self.path, {px, py})
-    end
+    print("aStar path: ", self.nodes[self.path[1]][1])
+    -- self.path = {}
+    -- for pp = 1, #paths[2] do
+    --     local p = paths[2][pp]
+    --     local px, py = self.nodes[p][1], self.nodes[p][2]
+
+    --     table.insert(self.path, {px, py})
+    -- end
 end
 
 --- Построение списка всех значимых узлов на карте
 function PathGraph:_buildNodes()
     self.nodes = {}
-    table.insert(self.nodes, {self.source.x + self.source.w / 2, self.source.y + self.source.h / 2})
+    table.insert(self.nodes, {self.source.x + (self.source.w / 2), self.source.y + (self.source.h / 2)})
     table.insert(self.nodes, {self.dest.x, self.dest.y})
 
     -- добавление выпуклых точек
@@ -180,25 +220,29 @@ function PathGraph:_dijkstra()
     
     while #nodes_open > 0 do
         table.sort(nodes_open, function(a, b) return weigths[a] < weigths[b]  end)
-        local p = nodes_open[1]
+
+        local currentPointIndex = nodes_open[1]
+
         table.remove(nodes_open, 1)
-        nodes_close[p] = true
+
+        nodes_close[currentPointIndex] = true
+
         for l = 1, #self.edges do
-            if self.edges[l][1] == p and not nodes_close[self.edges[l][2]] then
-                local new_weigth = weigths[p] + self.edges[l][3]
+            if self.edges[l][1] == currentPointIndex and not nodes_close[self.edges[l][2]] then
+                local new_weigth = weigths[currentPointIndex] + self.edges[l][3]
                 if new_weigth < weigths[self.edges[l][2]] then
                     table.insert(nodes_open, self.edges[l][2])
                     weigths[self.edges[l][2]] = new_weigth
-                    paths[self.edges[l][2]] = table_copy(paths[p])
+                    paths[self.edges[l][2]] = table_copy(paths[currentPointIndex])
                     table.insert(paths[self.edges[l][2]], self.edges[l][2])
                 end
             end
-            if self.edges[l][2] == p and not nodes_close[self.edges[l][1]] then
-                local new_weigth = weigths[p] + self.edges[l][3]
+            if self.edges[l][2] == currentPointIndex and not nodes_close[self.edges[l][1]] then
+                local new_weigth = weigths[currentPointIndex] + self.edges[l][3]
                 if new_weigth < weigths[self.edges[l][1]] then
                     table.insert(nodes_open, self.edges[l][1])
                     weigths[self.edges[l][1]] = new_weigth
-                    paths[self.edges[l][1]] = table_copy(paths[p])
+                    paths[self.edges[l][1]] = table_copy(paths[currentPointIndex])
                     table.insert(paths[self.edges[l][1]], self.edges[l][1])
                 end
             end
@@ -206,6 +250,120 @@ function PathGraph:_dijkstra()
     end
 
     return paths
+end
+
+function PathGraph:_aStar()
+    -- local destCell = self.dest
+    -- local sourceCell = {x = self.source.x + (self.source.w / 2), y = self.source.y + (self.source.h / 2)}
+    local gScore = {}
+    local fScore = {}
+    local openList = {1}            -- add the first node to the openList
+    local closedList = {}
+    local currentCell = {}
+    local neighbours = {}
+    local cameFrom = {}
+
+    gScore[1] = 0
+    fScore[1] = gScore[1] + dist(self.nodes[1][1], self.nodes[1][2], self.dest.x, self.dest.y)
+
+    for i = 2, #self.nodes do
+        gScore[i] = math.huge
+        fScore[i] = math.huge
+    end
+
+    print("self.dest: " .. self.dest.x .. ", " .. self.dest.y)
+
+    while #openList > 0 do
+        -- local currentPointIndex = openList[1]
+        local currentPointIndex = self:getWithLowestFScore(openList, fScore)
+
+        print("comparing: " .. self.nodes[currentPointIndex][1] .. " == " .. self.dest.x)
+        if self.nodes[currentPointIndex][1] == self.dest.x and self.nodes[currentPointIndex][2] == self.dest.y then
+            local path = unwind_path({}, cameFrom, currentPointIndex)
+            table.insert(path, currentPointIndex)
+
+            print("aStartEnd")
+
+            return path
+        end
+
+        -- table.remove(openList, currentPointIndex)
+        remove_node(openList, currentPointIndex)
+
+        closedList[currentPointIndex] = true
+
+        for l = 1, #self.edges do
+            if self.edges[l][1] == currentPointIndex and not closedList[self.edges[l][2]] then
+                local newGScore = gScore[currentPointIndex] + self.edges[l][3]
+
+                if newGScore < gScore[self.edges[l][2]] then
+                    table.insert(openList, self.edges[l][2])
+                    gScore[self.edges[l][2]] = newGScore
+                    fScore[self.edges[l][2]] = newGScore + dist(self.nodes[self.edges[l][2]][1], self.nodes[self.edges[l][2]][2], self.dest.x, self.dest.y)
+                    cameFrom[self.edges[l][2]] = currentPointIndex
+                end
+            end
+            if self.edges[l][2] == currentPointIndex and not closedList[self.edges[l][1]] then
+                local newGScore = gScore[currentPointIndex] + self.edges[l][3]
+
+                if newGScore < gScore[self.edges[l][1]] then
+                    table.insert(openList, self.edges[l][1])
+                    gScore[self.edges[l][1]] = newGScore
+                    fScore[self.edges[l][1]] = newGScore + dist(self.nodes[self.edges[l][1]][1], self.nodes[self.edges[l][1]][2], self.dest.x, self.dest.y)
+                    cameFrom[self.edges[l][1]] = currentPointIndex
+                end
+            end
+        end
+    end
+end 
+
+function PathGraph:_calcHCost(cell, dest)
+    return dist(cell.x, cell.y, dest.x, dest.y)
+end
+
+function PathGraph:_getGCostFor(source, dest)
+    -- print(source.x, dest.x)
+
+    return dist(source.x, source.y, dest.x, dest.y)
+
+    -- for i = 1, #self.edges do
+    --     -- print("edge: ", self.nodes[self.edges[i][1]][1], self.nodes[self.edges[i][1]][2], self.nodes[self.edges[i][2]][1], self.nodes[self.edges[i][2]][2])
+
+    --     if self.nodes[self.edges[i][1]][1] == source.x and self.nodes[self.edges[i][2]][1] == dest.x then
+    --         print("gCost: ", self.edges[i][3])
+    --         return self.edges[i][3]
+    --     end
+    -- end
+end
+
+function PathGraph:_getNeighbours(currentCell)
+    print("_getNeighbours: ",  currentCell.x, currentCell.y)
+
+    local neighbours = {}
+
+    for i = 1, #self.edges do
+        -- print("edge: ", self.nodes[self.edges[i][1]][1], self.nodes[self.edges[i][1]][2])
+
+        if self.nodes[self.edges[i][1]][1] == currentCell.x and self.nodes[self.edges[i][1]][2] == currentCell.y then
+            table.insert(neighbours, {x = self.nodes[self.edges[i][2]][1], y = self.nodes[self.edges[i][2]][2]})
+        elseif self.nodes[self.edges[i][2]][1] == currentCell.x and self.nodes[self.edges[i][2]][2] == currentCell.y then
+            table.insert(neighbours, {x = self.nodes[self.edges[i][1]][1], y = self.nodes[self.edges[i][1]][2]})
+        end
+    end
+
+    return neighbours
+end
+
+function PathGraph:getWithLowestFScore(openList, fScore)
+    local score, cellIndex = math.huge, nil
+
+    for _, node in ipairs(openList) do
+        if fScore[node] < score then
+            score, cellIndex = fScore[node], node
+        end
+    end
+
+    return cellIndex
 end
 
 return PathGraph
