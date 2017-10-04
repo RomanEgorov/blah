@@ -2,10 +2,10 @@ local bump = require "bump"
 local GuardMob = require "entity.GuardMob"
 local ColonyBase = require "entity.ColonyBase"
 local SeekerMob = require "entity.SeekerMob"
-local TestMob = require "entity.TestMob"
 local PathGraph = require "PathGraph"
 local ResourceSpawner = require "ResourceSpawner"
 local Player = require "Player"
+local TestMob = require "entity.TestMob"
 
 local world = bump.newWorld()
 
@@ -237,7 +237,7 @@ function love.keypressed(k)
         speedModifier = 3
     end
     if k == "r" then
-        speedModifier = 10
+        speedModifier = 0.1
     end
 
     if k == "p" then 

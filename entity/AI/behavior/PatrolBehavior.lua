@@ -14,7 +14,7 @@ function PatrolBehavior:initialize(patrolPoints)
 end
 
 function PatrolBehavior:behave(dt, entity)
-    self:patrol(dt, entity)
+    Behavior.behave(self, dt, entity)
 end
 
 function PatrolBehavior:patrol(dt, entity)

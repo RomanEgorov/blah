@@ -8,7 +8,9 @@ function Behavior:initialize()
 end
 
 function Behavior:behave(dt, entity)
-    --
+    if self.current_state ~= nil then
+        self:current_state(dt, entity)
+    end
 end
 
 return Behavior
