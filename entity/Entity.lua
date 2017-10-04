@@ -35,19 +35,20 @@ function Entity:getCenterCoords()
 	return x, y
 end
 
+--- Относительное перемещение сущности(объекта) на вектор (dx, dy)
+-- @param dx - перемещение вдоль оси x
+-- @param dy - перемещение вдоль оси y
+-- @return реальное перемещение объекта(с учетом коллизий)
 function Entity:move(dx, dy)
-    self.viewBox.x = (self.x + self.w / 2) - 100
-    self.viewBox.y = (self.y + self.h / 2) - 100
-    local viewX = self.viewBox.x
-    local viewY = self.viewBox.y
-    local viewW = self.viewBox.w
-    local viewH = self.viewBox.h
-	
-
-  	if dx ~= 0 or dy ~= 0 then
-  	  	self.x, self.y, cols, cols_len = self.world:move(self, self.x + dx, self.y + dy)
-        -- self.destinationPoint = {x = self.x, y = self.y}
-  	end
+    local dxy = 0.0
+    if dx ~= 0 or dy ~= 0 then
+        local old_x, old_y = self.x, self.y
+        self.x, self.y, _, _ = self.world:move(self, self.x + dx, self.y + dy)
+        dxy = ((self.x - old_x)^2 + (self.y - old_y)^2)^0.5 -- расчёт реального перемещения
+        self.viewBox.x = (self.x + self.w / 2) - self.viewBox.w /2
+        self.viewBox.y = (self.y + self.h / 2) - self.viewBox.h /2
+    end
+    return dxy
 end
 
 function Entity:moveTo(dest, dt)
