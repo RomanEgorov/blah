@@ -242,8 +242,6 @@ function PathGraph:_dijkstra()
 end
 
 function PathGraph:_aStar()
-    -- local destCell = self.dest
-    -- local sourceCell = {x = self.source.x + (self.source.w / 2), y = self.source.y + (self.source.h / 2)}
     local gScore = {}
     local fScore = {}
     local openList = {1}            -- add the first node to the openList
@@ -260,23 +258,16 @@ function PathGraph:_aStar()
         fScore[i] = math.huge
     end
 
-    print("self.dest: " .. self.dest.x .. ", " .. self.dest.y)
-
     while #openList > 0 do
-        -- local currentPointIndex = openList[1]
         local currentPointIndex = self:getWithLowestFScore(openList, fScore)
 
-        print("comparing: " .. self.nodes[currentPointIndex][1] .. " == " .. self.dest.x)
         if self.nodes[currentPointIndex][1] == self.dest.x and self.nodes[currentPointIndex][2] == self.dest.y then
             local path = self:unwind_path({}, cameFrom, currentPointIndex)
             table.insert(path, self.nodes[currentPointIndex])
 
-            print("aStartEnd")
-
             return path
         end
 
-        -- table.remove(openList, currentPointIndex)
         remove_node(openList, currentPointIndex)
 
         closedList[currentPointIndex] = true

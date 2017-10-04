@@ -203,9 +203,9 @@ function love.load()
     -- addEnemy(650, 100, 20, 20, 60)
     -- addSeekerEnemy(100, 100)
 
-    -- enemies[#enemies+1] = TestMob:new(world, 50, 300)
+    enemies[#enemies+1] = TestMob:new(world, 50, 300)
 
-    -- addSeekerEnemy(100, 100)
+    addSeekerEnemy(100, 100)
     -- addEnemy(100, 100, 20, 20, 60)
     -- local mob = GuardMob:new(world, 100, 100)
     -- mob.patrolPoints = {{x = 100, y = 100}, {x = 650, y = 500}}
@@ -229,7 +229,7 @@ function love.update(dt)
     end
 
     updatePlayer(dt)
-    -- colonyBase:update(dt)
+    colonyBase:update(dt)
 
     for _, enemy in ipairs(enemies) do
     -- enemy:update(dt)
@@ -242,9 +242,9 @@ end
 function love.draw()
     drawBlocks()
     drawPlayer()
-    -- drawEnemies()
+    drawEnemies()
     -- drawResources()
-    -- drawColonyBase()
+    drawColonyBase()
 
     -- grid:draw()
     -- print("nodes: ", playerPath.nodes[1])
