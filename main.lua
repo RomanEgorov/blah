@@ -83,7 +83,6 @@ end
 local function addSeekerEnemy(x, y)
     local mob = SeekerMob(world, x, y)
     local colonyX, colonyY = colonyBase:getCenterCoords()
-    -- mob.colonyBaseCoords = {x = colonyX, y = colonyY}
     mob.colonyBase = colonyBase
     mob.resourceSpawner = resourceSpawner
     enemies[#enemies+1] = mob
@@ -119,13 +118,10 @@ local function updatePlayer(dt)
     end
 
     if love.keyboard.isDown('3') then
-        -- playerPath:findPath()
         local cellIndices = {x = math.floor(player.x / 32), y = math.floor(player.y / 32)}
-        -- grid:findPath(cellIndices, grid.dest)
     end
 
     if #playerPath.path>0 then
-        -- local pointX, pointY = playerPath.nodes[playerPath.path[1]][1], playerPath.nodes[playerPath.path[1]][2]
         local pointX, pointY = playerPath.path[1][1], playerPath.path[1][2]
 
         if goToPoint and #playerPath.path then
@@ -166,12 +162,6 @@ local function updatePlayer(dt)
     end
 end
 
-local function updateEnemy(enemy, dt)
-    enemy:update(dt)
-
-    -- print("enemies num: ", #enemies)
-end
-
 local function drawBlocks()
   for _,block in ipairs(blocks) do
     drawBox(block, 255,0,0)
@@ -183,14 +173,14 @@ function love.load()
     math.randomseed(os.time())
 
     world:add(player, player.x, player.y, player.w, player.h)
-    -- world:add(colonyBase, colonyBase.x, colonyBase.y, colonyBase.w, colonyBase.h)
+    world:add(colonyBase, colonyBase.x, colonyBase.y, colonyBase.w, colonyBase.h)
 
     addBlock(0,       0,     800, 32)
     addBlock(0,      32,      32, 600-32*2)
     addBlock(800-32, 32,      32, 600-32*2)
     addBlock(0,      600-32, 800, 32)
 
-    -- resourceSpawner:spawnResource()
+    resourceSpawner:spawnResource()
 
     for i=1,blockCount do
         addBlock( math.random(100, 600),
@@ -200,25 +190,14 @@ function love.load()
          )
     end
 
-    -- addEnemy(650, 100, 20, 20, 60)
-    -- addSeekerEnemy(100, 100)
-
     enemies[#enemies+1] = TestMob:new(world, 50, 300)
-
     addSeekerEnemy(100, 100)
-    -- addEnemy(100, 100, 20, 20, 60)
-    -- local mob = GuardMob:new(world, 100, 100)
-    -- mob.patrolPoints = {{x = 100, y = 100}, {x = 650, y = 500}}
-    -- enemies[#enemies+1] = mob
 
     for _, enemy in ipairs(enemies) do
         world:add(enemy, enemy.x, enemy.y, enemy.w, enemy.h)
-        -- world:add(enemy.viewBox, enemy.viewBox.x, enemy.viewBox.y, enemy.viewBox.w, enemy.viewBox.h)
     end
 
     playerPath = PathGraph:new(world.staticObjects)
-
-    -- grid:findPath({x = 1, y = 3}, grid.dest)
 end
 
 function love.update(dt)
@@ -230,32 +209,19 @@ function love.update(dt)
 
     updatePlayer(dt)
     colonyBase:update(dt)
+    resourceSpawner:update(dt)
 
     for _, enemy in ipairs(enemies) do
-    -- enemy:update(dt)
-        updateEnemy(enemy, dt)
+        enemy:update(dt)
     end
-
-    resourceSpawner:update(dt)
 end
 
 function love.draw()
     drawBlocks()
     drawPlayer()
     drawEnemies()
-    -- drawResources()
+    drawResources()
     drawColonyBase()
-
-    -- grid:draw()
-    -- print("nodes: ", playerPath.nodes[1])
-    -- if playerPath.nodes ~= nil then
-    --     for i = 1, #playerPath.nodes do
-    --         print("node: ", playerPath.nodes[i][1], playerPath.nodes[i][2])
-    --         love.graphics.setPointSize(4)
-    --         love.graphics.setColor(255, 0, 0)
-    --         love.graphics.points(playerPath.nodes[i][1], playerPath.nodes[i][2])
-    --     end
-    -- end
 end
 
 function love.keypressed(k)
@@ -286,7 +252,6 @@ end
 function love.mousepressed(x, y)
     goToPoint = true
 
-    -- playerPath:findPath(player, {love.mouse.getX(), love.mouse.getY()}) 
     local px, py = player.x + (player.w / 2), player.y + (player.h / 2)
 
     playerPath:buildPath(player, {x=x, y=y})
