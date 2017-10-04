@@ -125,7 +125,8 @@ local function updatePlayer(dt)
     end
 
     if #playerPath.path>0 then
-        local pointX, pointY = playerPath.nodes[playerPath.path[1]][1], playerPath.nodes[playerPath.path[1]][2]
+        -- local pointX, pointY = playerPath.nodes[playerPath.path[1]][1], playerPath.nodes[playerPath.path[1]][2]
+        local pointX, pointY = playerPath.path[1][1], playerPath.path[1][2]
 
         if goToPoint and #playerPath.path then
             dx = (pointX - player.x - player.w / 2)
@@ -202,7 +203,7 @@ function love.load()
     -- addEnemy(650, 100, 20, 20, 60)
     -- addSeekerEnemy(100, 100)
 
-    enemies[#enemies+1] = TestMob:new(world, 50, 300)
+    -- enemies[#enemies+1] = TestMob:new(world, 50, 300)
 
     -- addSeekerEnemy(100, 100)
     -- addEnemy(100, 100, 20, 20, 60)

@@ -1,17 +1,6 @@
 local class = require "lib.middleclass"
 local math = require "math"
 
-function unwind_path ( flat_path, map, current_node )
-
-    if map [ current_node ] then
-        -- print("unwind_path current_node: ", current_node.x, current_node.y)
-        table.insert ( flat_path, 1, map [ current_node ] ) 
-        return unwind_path ( flat_path, map, map [ current_node ] )
-    else
-        return flat_path
-    end
-end
-
 function remove_node ( set, theNode )
 
     for i, node in ipairs ( set ) do
@@ -115,7 +104,7 @@ function PathGraph:buildPath(source, dest)
     self.path = self:_aStar()
     -- self.path = {}
 
-    print("aStar path: ", self.nodes[self.path[1]][1])
+    -- print("aStar path: ", self.nodes[self.path[1]][1])
     -- self.path = {}
     -- for pp = 1, #paths[2] do
     --     local p = paths[2][pp]
@@ -279,8 +268,8 @@ function PathGraph:_aStar()
 
         print("comparing: " .. self.nodes[currentPointIndex][1] .. " == " .. self.dest.x)
         if self.nodes[currentPointIndex][1] == self.dest.x and self.nodes[currentPointIndex][2] == self.dest.y then
-            local path = unwind_path({}, cameFrom, currentPointIndex)
-            table.insert(path, currentPointIndex)
+            local path = self:unwind_path({}, cameFrom, currentPointIndex)
+            table.insert(path, self.nodes[currentPointIndex])
 
             print("aStartEnd")
 
@@ -364,6 +353,19 @@ function PathGraph:getWithLowestFScore(openList, fScore)
     end
 
     return cellIndex
+end
+
+function PathGraph:unwind_path ( flat_path, map, current_node )
+    local index = 0
+
+    if map [ current_node ] then
+        index = map[current_node]
+
+        table.insert ( flat_path, 1, self.nodes[index]) 
+        return self:unwind_path ( flat_path, map, map [ current_node ] )
+    else
+        return flat_path
+    end
 end
 
 return PathGraph
